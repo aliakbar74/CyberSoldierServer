@@ -5,6 +5,7 @@ using CyberSoldierServer.Data;
 using CyberSoldierServer.Models.PlayerModels;
 using CyberSoldierServer.Models.PlayerModels.Dtos.PlayerDtos;
 using CyberSoldierServer.Models.PlayerModels.Dtos.PlayerSetWorldDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,17 +42,18 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpGet("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetWorld(int id) {
 			var player = await _dbContext.Players.Where(p => p.UserId == id)
-				.Include(p=>p.User)
+				.Include(p => p.User)
 				.Include(p => p.World)
 				.ThenInclude(w => w.Paths)
 				.ThenInclude(p => p.Dungeons)
-				.ThenInclude(d=>d.Dungeon)
+				.ThenInclude(d => d.Dungeon)
 				.Include(p => p.World)
 				.ThenInclude(w => w.Paths)
 				.ThenInclude(p => p.Cpus)
-				.ThenInclude(c=>c.Cpu)
+				.ThenInclude(c => c.Cpu)
 				.Include(p => p.World)
 				.ThenInclude(w => w.Paths)
 				.ThenInclude(p => p.Server)

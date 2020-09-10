@@ -33,7 +33,8 @@ namespace CyberSoldierServer {
 		public void ConfigureServices(IServiceCollection services) {
 			services.AddControllers();
 
-			services.AddDbContext<CyberSoldierContext>(opt => { opt.UseNpgsql(Configuration.GetConnectionString("CyberSoldierConnection")); });
+			services.AddDbContext<CyberSoldierContext>(opt =>
+				{ opt.UseNpgsql(Configuration.GetConnectionString("CyberSoldierConnection")); });
 
 			services.AddIdentity<AppUser, Role>(opt => {
 					opt.Password.RequiredLength = 6;
@@ -78,7 +79,7 @@ namespace CyberSoldierServer {
 				c.AddSecurityRequirement(security);
 			});
 
-
+			services.AddSuperUser(Configuration.GetSuperUserConfig());
 			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 		}
 

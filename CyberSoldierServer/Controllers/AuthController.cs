@@ -6,9 +6,11 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using CyberSoldierServer.Data;
 using CyberSoldierServer.Dtos;
 using CyberSoldierServer.Models;
 using CyberSoldierServer.Models.Auth;
+using CyberSoldierServer.Models.PlayerModels;
 using CyberSoldierServer.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,13 +28,17 @@ namespace CyberSoldierServer.Controllers {
 		private readonly RoleManager<Role> _roleManager;
 		private readonly IConfiguration _configuration;
 		private readonly JwtSettings _jwtSettings;
+		private readonly SuperUser _superUser;
+		private readonly CyberSoldierContext _dbContext;
 
 		public AuthController(IMapper mapper, UserManager<AppUser> userManager, RoleManager<Role> roleManager,
-			IConfiguration configuration, IOptions<JwtSettings> jwtSettings) {
+			IConfiguration configuration, IOptions<JwtSettings> jwtSettings, CyberSoldierContext dbContext, IOptions<SuperUser> superUser) {
 			_mapper = mapper;
 			_userManager = userManager;
 			_roleManager = roleManager;
 			_configuration = configuration;
+			_dbContext = dbContext;
+			_superUser = superUser.Value;
 			_jwtSettings = jwtSettings.Value;
 		}
 
@@ -41,8 +47,14 @@ namespace CyberSoldierServer.Controllers {
 			var user = _mapper.Map<UserSignUpDto, AppUser>(userSignUpDto);
 			var userCreateResult = await _userManager.CreateAsync(user, userSignUpDto.Password);
 
-			if (userCreateResult.Succeeded)
+			if (userCreateResult.Succeeded) {
+				var player = new Player {
+					UserId = user.Id
+				};
+				await _dbContext.Players.AddAsync(player);
+				await _dbContext.SaveChangesAsync();
 				return Ok();
+			}
 			return Problem(userCreateResult.Errors.First().Description, null, 500);
 		}
 
@@ -66,7 +78,8 @@ namespace CyberSoldierServer.Controllers {
 		[HttpPost("CreateRoles")]
 		public async Task<IActionResult> CreateRoles() {
 			var superUser = new AppUser {
-				UserName = _configuration.GetValue<string>("SuperUser:UserName")
+				// UserName = _configuration.GetValue<string>("SuperUser:UserName")
+				UserName = _superUser.UserName
 			};
 
 			if (!await _roleManager.RoleExistsAsync("Admin")) {
@@ -74,7 +87,8 @@ namespace CyberSoldierServer.Controllers {
 				await _roleManager.CreateAsync(role);
 			}
 
-			var pass = _configuration.GetValue<string>("SuperUser:Password");
+			// var pass = _configuration.GetValue<string>("SuperUser:Password");
+			var pass = _superUser.Password;
 			var user = await _userManager.FindByNameAsync(superUser.UserName);
 
 			if (user == null) {
@@ -87,17 +101,11 @@ namespace CyberSoldierServer.Controllers {
 			return Ok();
 		}
 
-		[Authorize]
-		[HttpPost("Hello")]
-		public IActionResult SayHello() {
-			return Ok("Hello");
-		}
-
 		private string GenerateJwt(AppUser user) {
 			var claims = new List<Claim> {
 				new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
 				new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
-				new Claim("role", "admin")
+				new Claim("role", "Admin")
 			};
 
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));

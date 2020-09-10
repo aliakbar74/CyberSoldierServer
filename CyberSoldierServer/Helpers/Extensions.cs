@@ -14,9 +14,18 @@ namespace CyberSoldierServer.Helpers {
 			return configuration.GetSection("JWT");
 		}
 
+		public static IConfiguration GetSuperUserConfig(this IConfiguration configuration) {
+			return configuration.GetSection("SuperUser");
+		}
+
 		public static IdentityBuilder AddJwt(this IdentityBuilder builder, IConfiguration config) {
 			builder.Services.Configure<JwtSettings>(config);
 			return builder;
+		}
+
+		public static IServiceCollection AddSuperUser(this IServiceCollection serviceCollection, IConfiguration config) {
+			serviceCollection.Configure<SuperUser>(config);
+			return serviceCollection;
 		}
 
 		public static AuthenticationBuilder AddJwtBearer(this AuthenticationBuilder builder, IConfiguration config) {
