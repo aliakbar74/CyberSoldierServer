@@ -1,15 +1,13 @@
 ﻿using CyberSoldierServer.Models.BaseModels;
 
 namespace CyberSoldierServer.Models.PlayerModels {
-	public class ServerCpu {
+	public class SlotDefenceItem {
 		public int Id { get; set; }
 
+		public DungeonSlot Slot { get; set; }
 		public int SlotId { get; set; }
 
-		public Cpu Cpu { get; set; }
-		public int CpuId { get; set; }
-
-		public PlayerBase Base { get; set; }
-		public int BaseId { get; set; }
+		public DefenceItem DefenceItem { get; set; }
+		public int DefenceItemId { get; set; }
 	}
 }

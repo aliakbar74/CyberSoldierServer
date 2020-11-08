@@ -21,55 +21,54 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost]
-		public async Task<ActionResult> SetWorld([FromBody] WorldInsertDto model) {
+		public async Task<ActionResult> SetWorld([FromBody] BaseInsertDto model) {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(x => x.UserId == UserId);
 
 			if (player == null)
 				return NotFound("player not found for this user");
 
-			if (await _dbContext.Worlds.AnyAsync(x => x.PlayerId == player.Id)) {
+			if (await _dbContext.PlayerBases.AnyAsync(x => x.PlayerId == player.Id))
 				return BadRequest("you already have world");
-			}
 
-			var playerWorld = _mapper.Map<PlayerWorld>(model);
-			playerWorld.PlayerId = player.Id;
+			var playerBase = _mapper.Map<PlayerBase>(model);
+			playerBase.PlayerId = player.Id;
 
-			await _dbContext.Worlds.AddAsync(playerWorld);
-
+			// player.PlayerBase.ServerId = playerBase.ServerId;
+			_dbContext.PlayerBases.Update(playerBase);
 			await _dbContext.SaveChangesAsync();
 
 			return Ok();
 		}
 
-		[HttpGet("{id}")]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> GetWorld(int id) {
-			var player = await _dbContext.Players.Where(p => p.UserId == id)
-				.Include(p => p.User)
-				.Include(p => p.World)
-				.ThenInclude(w => w.Paths)
-				.ThenInclude(p => p.Dungeons)
-				.ThenInclude(d => d.Dungeon)
-				.Include(p => p.World)
-				.ThenInclude(w => w.Paths)
-				.ThenInclude(p => p.Cpus)
-				.ThenInclude(c => c.Cpu)
-				.Include(p => p.World)
-				.ThenInclude(w => w.Paths)
-				.ThenInclude(p => p.Server)
-				.Include(p => p.World)
-				.ThenInclude(w => w.Paths)
-				.ThenInclude(p => p.Path)
-				.FirstOrDefaultAsync();
-			if (player == null)
-				return NotFound("player not found for this id");
-
-			var playerDto = new PlayerDto {
-				UserName = player.User.UserName,
-				World = _mapper.Map<WorldDto>(player.World)
-			};
-
-			return Ok(playerDto);
-		}
+		// [HttpGet("{id}")]
+		// [Authorize(Roles = "Admin")]
+		// public async Task<IActionResult> GetWorld(int id) {
+		// 	var player = await _dbContext.Players.Where(p => p.UserId == id)
+		// 		.Include(p => p.User)
+		// 		.Include(p=>p.PlayerBase)
+		// 		.ThenInclude(p => p.Dungeons)
+		// 		.ThenInclude(d=>d.Dungeon)
+		// 		.Include(p=>p.PlayerBase)
+		// 		.ThenInclude(p => p.Dungeons)
+		// 		.ThenInclude(d => d.Slots)
+		// 		.ThenInclude(s=>s.Slot)
+		// 		.Include(p=>p.PlayerBase)
+		// 		.ThenInclude(p => p.Dungeons)
+		// 		.ThenInclude(d => d.DefenceItems)
+		// 		.ThenInclude(d=>d.DefenceItem)
+		// 		.Include(p=>p.PlayerBase)
+		// 		.ThenInclude(p => p.Cpus)
+		// 		.ThenInclude(c=>c.Cpu)
+		// 		.Include(p=>p.PlayerBase)
+		// 		.ThenInclude(p => p.Server)
+		// 		.FirstOrDefaultAsync();
+		// 	if (player == null)
+		// 		return NotFound("player not found for this id");
+		//
+		// 	var playerDto = _mapper.Map<PlayerDto>(player);
+		// 	playerDto.UserName = player.User.UserName;
+		//
+		// 	return Ok(playerDto);
+		// }
 	}
 }

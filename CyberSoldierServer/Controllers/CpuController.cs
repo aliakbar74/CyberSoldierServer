@@ -20,15 +20,17 @@ namespace CyberSoldierServer.Controllers {
 
 		[HttpPost]
 		public async Task<IActionResult> AddCpu([FromBody] ServerCpuInsertDto model) {
-			var worldPath = await _dbContext.WorldPaths.Where(p => p.Id == model.PathId)
-				.Include(p => p.Server)
-				.Include(p=>p.Cpus)
+			var player = await _dbContext.Players.Where(p=>p.UserId==UserId)
+				.Include(p=>p.PlayerBase)
+				.ThenInclude(p => p.Server)
+				.Include(p=>p.PlayerBase)
+				.ThenInclude(p=>p.Cpus)
 				.FirstOrDefaultAsync();
 
-			if (worldPath == null)
+			if (player == null)
 				return NotFound("Path not found");
-			if (worldPath.Server.CpuCount <= worldPath.Cpus.Count)
-				return BadRequest($"You already have {worldPath.Server.CpuCount} cpu");
+			if (player.PlayerBase.Server.CpuCount <= player.PlayerBase.Cpus.Count)
+				return BadRequest($"You already have {player.PlayerBase.Server.CpuCount} cpu");
 
 			var cpu = _mapper.Map<ServerCpu>(model);
 

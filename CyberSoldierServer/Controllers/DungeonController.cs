@@ -19,33 +19,33 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> AddDungeon([FromBody] PathDungeonInsertDto model) {
-			if (!await _dbContext.PathDungeons.AnyAsync(p => p.Id == model.WorldPathId))
-				return NotFound("Path not found");
+		public async Task<IActionResult> AddDungeon([FromBody] DungeonInsertDto model) {
+			// if (!await _dbContext.Players.AnyAsync(p => p.UserId == UserId))
+			// 	return NotFound("Player not found");
 
-			var dungeon = _mapper.Map<PathDungeon>(model);
+			// var player = await _dbContext.Players.Where(p => p.UserId == UserId).Include(p=>p.PlayerBase);
+			var dungeon = _mapper.Map<BaseDungeon>(model);
 
-			await _dbContext.PathDungeons.AddAsync(dungeon);
+			await _dbContext.PlayerDungeons.AddAsync(dungeon);
 			await _dbContext.SaveChangesAsync();
 			return Ok();
 		}
 
 		[HttpPost("{id}")]
 		public async Task<IActionResult> UpgradeDungeon(int id) {
-			var pathDungeon = await _dbContext.PathDungeons.Where(d => d.Id == id)
+			var playerDungeon = await _dbContext.PlayerDungeons.Where(d => d.Id == id)
 				.Include(d=>d.Dungeon).FirstOrDefaultAsync();
-			if (pathDungeon==null)
+			if (playerDungeon==null)
 				return NotFound("Dungeon not found");
 
-			int level = pathDungeon.Dungeon.Level;
 			var dungeon = await _dbContext.Dungeons.
-				Where(d => d.DungeonType == pathDungeon.Dungeon.DungeonType && d.Level  == pathDungeon.Dungeon.Level+ 1)
+				Where(d => d.DungeonType == playerDungeon.Dungeon.DungeonType && d.Level  == playerDungeon.Dungeon.Level+ 1)
 				.FirstOrDefaultAsync();
 			if (dungeon == null)
 				return NotFound("Dungeon is at max level");
 
-			pathDungeon.Dungeon = dungeon;
-			_dbContext.PathDungeons.Update(pathDungeon);
+			playerDungeon.Dungeon = dungeon;
+			_dbContext.PlayerDungeons.Update(playerDungeon);
 
 			await _dbContext.SaveChangesAsync();
 			return Ok();
