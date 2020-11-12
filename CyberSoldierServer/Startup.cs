@@ -43,7 +43,7 @@ namespace CyberSoldierServer {
 					opt.Password.RequireDigit = false;
 					opt.Password.RequireNonAlphanumeric = false;
 					opt.Password.RequireNonAlphanumeric = false;
-					opt.User.RequireUniqueEmail = true;
+					// opt.User.RequireUniqueEmail = true;
 				})
 				.AddEntityFrameworkStores<CyberSoldierContext>()
 				.AddDefaultTokenProviders()
