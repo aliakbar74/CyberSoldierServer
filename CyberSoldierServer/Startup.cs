@@ -15,11 +15,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
+using CyberSoldierServer.Dtos;
 using CyberSoldierServer.Helpers;
 using CyberSoldierServer.Helpers.Extensions;
 using CyberSoldierServer.Models.Auth;
 using CyberSoldierServer.Services;
 using CyberSoldierServer.Settings;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 
@@ -81,6 +84,9 @@ namespace CyberSoldierServer {
 					};
 				c.AddSecurityRequirement(security);
 			});
+
+			services.AddMvc().AddFluentValidation();
+			services.AddTransient<IValidator<UserSignUpDto>, UserSignValidator>();
 
 			services.AddSuperUser(Configuration.GetSuperUserConfig());
 			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

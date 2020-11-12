@@ -50,6 +50,12 @@ namespace CyberSoldierServer.Controllers {
 			var user = _mapper.Map<UserSignUpDto, AppUser>(userSignUpDto);
 			var userCreateResult = await _userManager.CreateAsync(user, userSignUpDto.Password);
 
+			if (!string.IsNullOrEmpty(userSignUpDto.Email)) {
+				if (!ModelState.IsValid) {
+					return BadRequest();
+				}
+			}
+
 			if (userCreateResult.Succeeded) {
 				var player = new Player {
 					UserId = user.Id

@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
+      <PackageReference Include="FluentValidation.AspNetCore" Version="9.3.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.7" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.7" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.7" />
@@ -14,6 +15,31 @@
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Migrations\20201107061919_changeDefenceItem2.cs" />
+      <Compile Remove="Migrations\20201107061919_changeDefenceItem2.Designer.cs" />
+      <Compile Remove="Migrations\20201105172443_ChangePrimKeyOfDefenceItem.cs" />
+      <Compile Remove="Migrations\20201105172443_ChangePrimKeyOfDefenceItem.Designer.cs" />
+      <Compile Remove="Migrations\20201105160730_SlotIdAndDungeonIdAsPrimeKeyForDefenseItem.cs" />
+      <Compile Remove="Migrations\20201105160730_SlotIdAndDungeonIdAsPrimeKeyForDefenseItem.Designer.cs" />
+      <Compile Remove="Migrations\20201105145646_RemoveSlotFromDefenceItem.cs" />
+      <Compile Remove="Migrations\20201105145646_RemoveSlotFromDefenceItem.Designer.cs" />
+      <Compile Remove="Migrations\20201105144728_UpdatePlayerBase.cs" />
+      <Compile Remove="Migrations\20201105144728_UpdatePlayerBase.Designer.cs" />
+      <Compile Remove="Migrations\20201105142048_RemoveStartTime.cs" />
+      <Compile Remove="Migrations\20201105142048_RemoveStartTime.Designer.cs" />
+      <Compile Remove="Migrations\20201105141700_AddPlayerBase.cs" />
+      <Compile Remove="Migrations\20201105141700_AddPlayerBase.Designer.cs" />
+      <Compile Remove="Migrations\20201105110221_AddCapacityToServer.cs" />
+      <Compile Remove="Migrations\20201105110221_AddCapacityToServer.Designer.cs" />
+      <Compile Remove="Migrations\20201105104303_removePathAndAddSlots.cs" />
+      <Compile Remove="Migrations\20201105104303_removePathAndAddSlots.Designer.cs" />
+      <Compile Remove="Migrations\20200913075804_AddTimeToServer.cs" />
+      <Compile Remove="Migrations\20200913075804_AddTimeToServer.Designer.cs" />
+      <Compile Remove="Migrations\20200912132806_AddGemAndTokenToPlayer2.cs" />
+      <Compile Remove="Migrations\20200912132806_AddGemAndTokenToPlayer2.Designer.cs" />
     </ItemGroup>
 
 
