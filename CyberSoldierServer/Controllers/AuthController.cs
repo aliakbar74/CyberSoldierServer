@@ -11,6 +11,7 @@ using CyberSoldierServer.Dtos;
 using CyberSoldierServer.Models;
 using CyberSoldierServer.Models.Auth;
 using CyberSoldierServer.Models.PlayerModels;
+using CyberSoldierServer.Services;
 using CyberSoldierServer.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -30,14 +31,18 @@ namespace CyberSoldierServer.Controllers {
 		private readonly JwtSettings _jwtSettings;
 		private readonly SuperUser _superUser;
 		private readonly CyberSoldierContext _dbContext;
+		private readonly IConvertErrorToCodeService _convertErrorToCode;
+
 
 		public AuthController(IMapper mapper, UserManager<AppUser> userManager, RoleManager<Role> roleManager,
-			IConfiguration configuration, IOptions<JwtSettings> jwtSettings, CyberSoldierContext dbContext, IOptions<SuperUser> superUser) {
+			IConfiguration configuration, IOptions<JwtSettings> jwtSettings, CyberSoldierContext dbContext,
+			IOptions<SuperUser> superUser, IConvertErrorToCodeService convertErrorToCode) {
 			_mapper = mapper;
 			_userManager = userManager;
 			_roleManager = roleManager;
 			_configuration = configuration;
 			_dbContext = dbContext;
+			_convertErrorToCode = convertErrorToCode;
 			_superUser = superUser.Value;
 			_jwtSettings = jwtSettings.Value;
 		}
@@ -55,7 +60,10 @@ namespace CyberSoldierServer.Controllers {
 				await _dbContext.SaveChangesAsync();
 				return Ok();
 			}
-			return Problem(userCreateResult.Errors.First().Description, null, 500);
+
+
+			var code = _convertErrorToCode.ConvertErrorToCode(userCreateResult.Errors.First().Code);
+			return Problem($"{code.ToString()} : {userCreateResult.Errors.First().Description}", null, 500);
 		}
 
 		[HttpPost("SignIn")]

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using CyberSoldierServer.Settings;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
@@ -8,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace CyberSoldierServer.Helpers {
+namespace CyberSoldierServer.Helpers.Extensions {
 	public static class Extensions {
 		public static IConfiguration GetJwtConfig(this IConfiguration configuration) {
 			return configuration.GetSection("JWT");

@@ -33,6 +33,7 @@ namespace CyberSoldierServer.Controllers {
 				return BadRequest($"You already have {player.PlayerBase.Server.CpuCount} cpu");
 
 			var cpu = _mapper.Map<ServerCpu>(model);
+			cpu.BaseId = player.PlayerBase.Id;
 
 			await _dbContext.ServerCpus.AddAsync(cpu);
 			await _dbContext.SaveChangesAsync();

@@ -12,6 +12,5 @@ namespace CyberSoldierServer.Models.PlayerModels {
 		public int DungeonId { get; set; }
 
 		public ICollection<DungeonSlot> Slots { get; set; }
-		// public ICollection<DungeonDefenceItem> DefenceItems { get; set; }
 	}
 }
