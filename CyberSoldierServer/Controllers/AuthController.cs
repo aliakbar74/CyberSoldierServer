@@ -61,7 +61,6 @@ namespace CyberSoldierServer.Controllers {
 				return Ok();
 			}
 
-
 			var code = _convertErrorToCode.ConvertErrorToCode(userCreateResult.Errors.First().Code);
 			return Problem($"{code.ToString()} : {userCreateResult.Errors.First().Description}", null, 500);
 		}
