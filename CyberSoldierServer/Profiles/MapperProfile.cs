@@ -13,12 +13,14 @@ namespace CyberSoldierServer.Profiles {
 			CreateMap<SlotInsertDto, DungeonSlot>();
 			CreateMap<SlotDefenceItemInsertDto, SlotDefenceItem>();
 			CreateMap<WeaponDto, PlayerWeapon>();
+			CreateMap<ShieldDto, PlayerShield>();
 
 			CreateMap<PlayerWorld, WorldDto>();
 			CreateMap<PlayerWorldPath, WorldPathDto>();
 			CreateMap<PathDungeon, PathDungeonDto>();
 			CreateMap<ServerCpu, ServerCpuDto>();
 			CreateMap<PlayerWeapon, WeaponDto>();
+			CreateMap<PlayerShield, ShieldDto>();
 		}
 	}
 }

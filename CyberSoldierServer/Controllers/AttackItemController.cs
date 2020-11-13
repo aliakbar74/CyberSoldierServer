@@ -38,12 +38,38 @@ namespace CyberSoldierServer.Controllers {
 		[HttpGet("GetWeapons")]
 		public async Task<ActionResult<WeaponDto>> GetWeapons() {
 			var player = await _db.Players.Where(p => p.UserId == UserId).Include(p => p.Weapons).FirstOrDefaultAsync();
-			if (player.Weapons == null) {
+			if (player.Weapons.Count==0) {
 				return NotFound("This player has no weapon");
 			}
 
 			var weapons = _mapper.Map<ICollection<WeaponDto>>(player.Weapons);
 			return Ok(weapons);
+		}
+
+		[HttpPost("SetShield")]
+		public async Task<IActionResult> SetShield([FromBody] ShieldDto shieldDto) {
+			var player = await _db.Players.FirstOrDefaultAsync(p=>p.UserId==UserId);
+			var shield = _mapper.Map<PlayerShield>(shieldDto);
+
+			if (await _db.PlayerShields.Where(s => s.PlayerId == player.Id).AnyAsync(s => s.ShieldId == shield.Id)) {
+				return BadRequest("You already have this Shield!");
+			}
+
+			shield.PlayerId = player.Id;
+			await _db.PlayerShields.AddAsync(shield);
+			await _db.SaveChangesAsync();
+			return Ok();
+		}
+
+		[HttpGet("GetShields")]
+		public async Task<ActionResult<WeaponDto>> GetShields() {
+			var player = await _db.Players.Where(p => p.UserId == UserId).Include(p => p.Shields).FirstOrDefaultAsync();
+			if (player.Shields.Count==0) {
+				return NotFound("This player has no Shield");
+			}
+
+			var shields = _mapper.Map<ICollection<ShieldDto>>(player.Shields);
+			return Ok(shields);
 		}
 	}
 }
