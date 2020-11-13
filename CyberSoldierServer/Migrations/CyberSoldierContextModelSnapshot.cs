@@ -210,6 +210,24 @@ namespace CyberSoldierServer.Migrations
                     b.ToTable("Servers");
                 });
 
+            modelBuilder.Entity("CyberSoldierServer.Models.BaseModels.Shield", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Shields");
+                });
+
             modelBuilder.Entity("CyberSoldierServer.Models.BaseModels.Slot", b =>
                 {
                     b.Property<int>("Id")
@@ -244,14 +262,35 @@ namespace CyberSoldierServer.Migrations
                     b.ToTable("TokenPacks");
                 });
 
-            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.BaseDungeon", b =>
+            modelBuilder.Entity("CyberSoldierServer.Models.BaseModels.Weapon", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("BaseId")
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PrefabId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Weapons");
+                });
+
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.CampDungeon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CampId")
                         .HasColumnType("integer");
 
                     b.Property<int>("DungeonId")
@@ -259,7 +298,7 @@ namespace CyberSoldierServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BaseId");
+                    b.HasIndex("CampId");
 
                     b.HasIndex("DungeonId");
 
@@ -312,7 +351,7 @@ namespace CyberSoldierServer.Migrations
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.PlayerBase", b =>
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.PlayerCamp", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -332,7 +371,51 @@ namespace CyberSoldierServer.Migrations
 
                     b.HasIndex("ServerId");
 
-                    b.ToTable("PlayerBases");
+                    b.ToTable("PlayerCamps");
+                });
+
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.PlayerShield", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ShieldId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("ShieldId");
+
+                    b.ToTable("PlayerShields");
+                });
+
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.PlayerWeapon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WeaponId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("WeaponId");
+
+                    b.ToTable("PlayerWeapons");
                 });
 
             modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.ServerCpu", b =>
@@ -342,7 +425,7 @@ namespace CyberSoldierServer.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("BaseId")
+                    b.Property<int>("CampId")
                         .HasColumnType("integer");
 
                     b.Property<int>("CpuId")
@@ -353,7 +436,7 @@ namespace CyberSoldierServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BaseId");
+                    b.HasIndex("CampId");
 
                     b.HasIndex("CpuId");
 
@@ -484,11 +567,11 @@ namespace CyberSoldierServer.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.BaseDungeon", b =>
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.CampDungeon", b =>
                 {
-                    b.HasOne("CyberSoldierServer.Models.PlayerModels.PlayerBase", "Base")
+                    b.HasOne("CyberSoldierServer.Models.PlayerModels.PlayerCamp", "Camp")
                         .WithMany("Dungeons")
-                        .HasForeignKey("BaseId")
+                        .HasForeignKey("CampId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -501,7 +584,7 @@ namespace CyberSoldierServer.Migrations
 
             modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.DungeonSlot", b =>
                 {
-                    b.HasOne("CyberSoldierServer.Models.PlayerModels.BaseDungeon", "Dungeon")
+                    b.HasOne("CyberSoldierServer.Models.PlayerModels.CampDungeon", "Dungeon")
                         .WithMany("Slots")
                         .HasForeignKey("DungeonId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -523,11 +606,11 @@ namespace CyberSoldierServer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.PlayerBase", b =>
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.PlayerCamp", b =>
                 {
                     b.HasOne("CyberSoldierServer.Models.PlayerModels.Player", "Player")
-                        .WithOne("PlayerBase")
-                        .HasForeignKey("CyberSoldierServer.Models.PlayerModels.PlayerBase", "PlayerId")
+                        .WithOne("Camp")
+                        .HasForeignKey("CyberSoldierServer.Models.PlayerModels.PlayerCamp", "PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -538,11 +621,41 @@ namespace CyberSoldierServer.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.PlayerShield", b =>
+                {
+                    b.HasOne("CyberSoldierServer.Models.PlayerModels.Player", "Player")
+                        .WithMany("Shields")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CyberSoldierServer.Models.BaseModels.Shield", "Shield")
+                        .WithMany()
+                        .HasForeignKey("ShieldId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.PlayerWeapon", b =>
+                {
+                    b.HasOne("CyberSoldierServer.Models.PlayerModels.Player", "Player")
+                        .WithMany("Weapons")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CyberSoldierServer.Models.BaseModels.Weapon", "Weapon")
+                        .WithMany()
+                        .HasForeignKey("WeaponId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.ServerCpu", b =>
                 {
-                    b.HasOne("CyberSoldierServer.Models.PlayerModels.PlayerBase", "Base")
+                    b.HasOne("CyberSoldierServer.Models.PlayerModels.PlayerCamp", "Camp")
                         .WithMany("Cpus")
-                        .HasForeignKey("BaseId")
+                        .HasForeignKey("CampId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

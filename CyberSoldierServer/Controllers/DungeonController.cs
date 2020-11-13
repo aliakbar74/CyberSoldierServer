@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using CyberSoldierServer.Data;
+using CyberSoldierServer.Dtos.PlayerSetWorldDtos;
 using CyberSoldierServer.Models.PlayerModels;
-using CyberSoldierServer.Models.PlayerModels.Dtos.PlayerSetWorldDtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,9 +20,9 @@ namespace CyberSoldierServer.Controllers {
 
 		[HttpPost]
 		public async Task<IActionResult> AddDungeon([FromBody] DungeonInsertDto model) {
-			var dungeon = _mapper.Map<BaseDungeon>(model);
-			var player = await _dbContext.Players.Where(p => p.UserId == UserId).Include(p=>p.PlayerBase).FirstOrDefaultAsync();
-			dungeon.BaseId = player.PlayerBase.Id;
+			var dungeon = _mapper.Map<CampDungeon>(model);
+			var player = await _dbContext.Players.Where(p => p.UserId == UserId).Include(p=>p.Camp).FirstOrDefaultAsync();
+			dungeon.CampId = player.Camp.Id;
 
 			await _dbContext.PlayerDungeons.AddAsync(dungeon);
 			await _dbContext.SaveChangesAsync();

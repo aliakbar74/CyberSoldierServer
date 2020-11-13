@@ -21,15 +21,19 @@ namespace CyberSoldierServer.Data {
 		public DbSet<Dungeon> Dungeons { get; set; }
 		public DbSet<Slot> Slots { get; set; }
 		public DbSet<DefenceItem> DefenceItems { get; set; }
+		public DbSet<Shield> Shields { get; set; }
+		public DbSet<Weapon>  Weapons{ get; set; }
 
 		// user models
 		public DbSet<Player> Players { get; set; }
-		public DbSet<PlayerBase> PlayerBases { get; set; }
+		public DbSet<PlayerCamp> PlayerCamps { get; set; }
 		public DbSet<ServerCpu> ServerCpus { get; set; }
 		public DbSet<GemPack> GemPacks { get; set; }
 		public DbSet<TokenPack> TokenPacks { get; set; }
-		public DbSet<BaseDungeon> PlayerDungeons { get; set; }
+		public DbSet<CampDungeon> PlayerDungeons { get; set; }
 		public DbSet<DungeonSlot> DungeonSlots { get; set; }
 		public DbSet<SlotDefenceItem> SlotDefenceItems { get; set; }
+		public DbSet<PlayerShield> PlayerShields { get; set; }
+		public DbSet<PlayerWeapon> PlayerWeapons { get; set; }
 	}
 }

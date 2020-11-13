@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
+using CyberSoldierServer.Dtos.PlayerDtos;
+using CyberSoldierServer.Dtos.PlayerSetWorldDtos;
 using CyberSoldierServer.Models.PlayerModels;
-using CyberSoldierServer.Models.PlayerModels.Dtos.PlayerDtos;
-using CyberSoldierServer.Models.PlayerModels.Dtos.PlayerSetWorldDtos;
 
 namespace CyberSoldierServer.Profiles {
 	public class MapperProfile : Profile {
 		public MapperProfile() {
-			CreateMap<BaseInsertDto, PlayerBase>();
+			CreateMap<BaseInsertDto, PlayerCamp>();
 			// CreateMap<PlayerWorldPathInsertDto, PlayerWorldPath>();
-			CreateMap<DungeonInsertDto, BaseDungeon>();
+			CreateMap<DungeonInsertDto, CampDungeon>();
 			CreateMap<ServerCpuInsertDto, ServerCpu>();
 			CreateMap<SlotInsertDto, DungeonSlot>();
 			CreateMap<SlotDefenceItemInsertDto, SlotDefenceItem>();
+			CreateMap<WeaponDto, PlayerWeapon>();
 
 			CreateMap<PlayerWorld, WorldDto>();
 			CreateMap<PlayerWorldPath, WorldPathDto>();

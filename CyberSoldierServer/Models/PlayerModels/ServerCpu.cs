@@ -9,7 +9,7 @@ namespace CyberSoldierServer.Models.PlayerModels {
 		public Cpu Cpu { get; set; }
 		public int CpuId { get; set; }
 
-		public PlayerBase Base { get; set; }
-		public int BaseId { get; set; }
+		public PlayerCamp Camp { get; set; }
+		public int CampId { get; set; }
 	}
 }

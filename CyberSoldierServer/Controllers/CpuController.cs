@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using CyberSoldierServer.Data;
+using CyberSoldierServer.Dtos.PlayerSetWorldDtos;
 using CyberSoldierServer.Models.PlayerModels;
-using CyberSoldierServer.Models.PlayerModels.Dtos.PlayerSetWorldDtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,19 +21,19 @@ namespace CyberSoldierServer.Controllers {
 		[HttpPost]
 		public async Task<IActionResult> AddCpu([FromBody] ServerCpuInsertDto model) {
 			var player = await _dbContext.Players.Where(p=>p.UserId==UserId)
-				.Include(p=>p.PlayerBase)
+				.Include(p=>p.Camp)
 				.ThenInclude(p => p.Server)
-				.Include(p=>p.PlayerBase)
+				.Include(p=>p.Camp)
 				.ThenInclude(p=>p.Cpus)
 				.FirstOrDefaultAsync();
 
 			if (player == null)
 				return NotFound("Path not found");
-			if (player.PlayerBase.Server.CpuCount <= player.PlayerBase.Cpus.Count)
-				return BadRequest($"You already have {player.PlayerBase.Server.CpuCount} cpu");
+			if (player.Camp.Server.CpuCount <= player.Camp.Cpus.Count)
+				return BadRequest($"You already have {player.Camp.Server.CpuCount} cpu");
 
 			var cpu = _mapper.Map<ServerCpu>(model);
-			cpu.BaseId = player.PlayerBase.Id;
+			cpu.CampId = player.Camp.Id;
 
 			await _dbContext.ServerCpus.AddAsync(cpu);
 			await _dbContext.SaveChangesAsync();
