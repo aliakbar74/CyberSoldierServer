@@ -18,6 +18,7 @@ namespace CyberSoldierServer.Profiles {
 			CreateMap<PlayerWorldPath, WorldPathDto>();
 			CreateMap<PathDungeon, PathDungeonDto>();
 			CreateMap<ServerCpu, ServerCpuDto>();
+			CreateMap<PlayerWeapon, WeaponDto>();
 		}
 	}
 }

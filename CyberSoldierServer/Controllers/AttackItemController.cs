@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CyberSoldierServer.Data;
 using CyberSoldierServer.Dtos.PlayerSetWorldDtos;
+using CyberSoldierServer.Models.BaseModels;
 using CyberSoldierServer.Models.PlayerModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +33,17 @@ namespace CyberSoldierServer.Controllers {
 			await _db.PlayerWeapons.AddAsync(weapon);
 			await _db.SaveChangesAsync();
 			return Ok();
+		}
+
+		[HttpGet("GetWeapons")]
+		public async Task<ActionResult<WeaponDto>> GetWeapons() {
+			var player = await _db.Players.Where(p => p.UserId == UserId).Include(p => p.Weapons).FirstOrDefaultAsync();
+			if (player.Weapons == null) {
+				return NotFound("This player has no weapon");
+			}
+
+			var weapons = _mapper.Map<ICollection<WeaponDto>>(player.Weapons);
+			return Ok(weapons);
 		}
 	}
 }
