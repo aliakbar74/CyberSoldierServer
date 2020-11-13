@@ -20,11 +20,9 @@ namespace CyberSoldierServer.Controllers {
 
 		[HttpPost]
 		public async Task<IActionResult> AddDungeon([FromBody] DungeonInsertDto model) {
-			// if (!await _dbContext.Players.AnyAsync(p => p.UserId == UserId))
-			// 	return NotFound("Player not found");
-
-			// var player = await _dbContext.Players.Where(p => p.UserId == UserId).Include(p=>p.PlayerBase);
 			var dungeon = _mapper.Map<BaseDungeon>(model);
+			var player = await _dbContext.Players.Where(p => p.UserId == UserId).Include(p=>p.PlayerBase).FirstOrDefaultAsync();
+			dungeon.BaseId = player.PlayerBase.Id;
 
 			await _dbContext.PlayerDungeons.AddAsync(dungeon);
 			await _dbContext.SaveChangesAsync();
