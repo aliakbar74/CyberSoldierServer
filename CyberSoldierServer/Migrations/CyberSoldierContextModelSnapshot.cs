@@ -337,6 +337,12 @@ namespace CyberSoldierServer.Migrations
                     b.Property<int>("Gem")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Token")
                         .HasColumnType("integer");
 

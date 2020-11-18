@@ -12,6 +12,8 @@ namespace CyberSoldierServer.Models.PlayerModels {
 
 		public AppUser User { get; set; }
 		public int UserId { get; set; }
+		public bool IsOnline { get; set; }
+		public int Level { get; set; }
 
 		public PlayerCamp Camp { get; set; }
 		public int Gem { get; set; }

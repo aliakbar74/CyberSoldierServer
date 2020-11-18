@@ -6,21 +6,22 @@ using CyberSoldierServer.Models.PlayerModels;
 namespace CyberSoldierServer.Profiles {
 	public class MapperProfile : Profile {
 		public MapperProfile() {
-			CreateMap<BaseInsertDto, PlayerCamp>();
-			// CreateMap<PlayerWorldPathInsertDto, PlayerWorldPath>();
+			CreateMap<CampInsertDto, PlayerCamp>();
 			CreateMap<DungeonInsertDto, CampDungeon>();
-			CreateMap<ServerCpuInsertDto, ServerCpu>();
+			CreateMap<ServerCpuDto, ServerCpu>();
 			CreateMap<SlotInsertDto, DungeonSlot>();
 			CreateMap<SlotDefenceItemInsertDto, SlotDefenceItem>();
 			CreateMap<WeaponDto, PlayerWeapon>();
 			CreateMap<ShieldDto, PlayerShield>();
 
-			CreateMap<PlayerWorld, WorldDto>();
-			CreateMap<PlayerWorldPath, WorldPathDto>();
-			CreateMap<PathDungeon, PathDungeonDto>();
+			CreateMap<PlayerCamp, CampInsertDto>();
+			CreateMap<CampDungeon, DungeonInsertDto>();
 			CreateMap<ServerCpu, ServerCpuDto>();
+			CreateMap<DungeonSlot, SlotInsertDto>();
+			CreateMap<SlotDefenceItem, SlotDefenceItemInsertDto>();
 			CreateMap<PlayerWeapon, WeaponDto>();
 			CreateMap<PlayerShield, ShieldDto>();
+			CreateMap<Player, PlayerDto>();
 		}
 	}
 }

@@ -14,6 +14,7 @@ using CyberSoldierServer.Services;
 using CyberSoldierServer.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -56,10 +57,12 @@ namespace CyberSoldierServer.Controllers {
 				}
 			}
 
+
 			if (userCreateResult.Succeeded) {
 				var player = new Player {
 					UserId = user.Id
 				};
+				player.IsOnline = true;
 				await _dbContext.Players.AddAsync(player);
 				await _dbContext.SaveChangesAsync();
 				return Ok();
@@ -80,6 +83,10 @@ namespace CyberSoldierServer.Controllers {
 			var signInResult = await _userManager.CheckPasswordAsync(user, userDto.Password);
 
 			if (signInResult) {
+				var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == user.Id);
+				player.IsOnline = true;
+				_dbContext.Players.Update(player);
+				await _dbContext.SaveChangesAsync();
 				return Ok(new {token = GenerateJwt(user)});
 			}
 

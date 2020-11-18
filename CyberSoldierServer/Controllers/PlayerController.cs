@@ -1,5 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using CyberSoldierServer.Data;
+using CyberSoldierServer.Dtos.PlayerDtos;
+using CyberSoldierServer.Models.PlayerModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,9 +13,11 @@ namespace CyberSoldierServer.Controllers {
 	[Route("api/[controller]")]
 	public class PlayerController : AuthApiController {
 		private readonly CyberSoldierContext _dbContext;
+		private readonly IMapper _mapper;
 
-		public PlayerController(CyberSoldierContext dbContext) {
+		public PlayerController(CyberSoldierContext dbContext, IMapper mapper) {
 			_dbContext = dbContext;
+			_mapper = mapper;
 		}
 
 		[HttpPost("AddGems/{gemId}")]
@@ -29,6 +37,30 @@ namespace CyberSoldierServer.Controllers {
 			return Ok();
 		}
 
+		[HttpPost("AddGemsUnLimit/{value}")]
+		public async Task<IActionResult> AddGemUnLimit(int value) {
+			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
+			if (player == null)
+				return NotFound("Player not found");
+
+			player.Gem += value;
+
+			await _dbContext.SaveChangesAsync();
+			return Ok();
+		}
+
+		[HttpPost("AddTokenUnLimit/{value}")]
+		public async Task<IActionResult> AddTokenUnLimit(int value) {
+			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
+			if (player == null)
+				return NotFound("Player not found");
+
+			player.Token += value;
+
+			await _dbContext.SaveChangesAsync();
+			return Ok();
+		}
+
 		[HttpGet("GetGems")]
 		public async Task<IActionResult> GetGem() {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
@@ -36,7 +68,7 @@ namespace CyberSoldierServer.Controllers {
 				return NotFound("Player not found");
 
 			var gem = player.Gem;
-			return Ok(new{gem});
+			return Ok(new {gem});
 		}
 
 		[HttpPost("AddTokens/{tokenId}")]
@@ -63,7 +95,53 @@ namespace CyberSoldierServer.Controllers {
 				return NotFound("Player not found");
 
 			var token = player.Token;
-			return Ok(new{token});
+			return Ok(new {token});
+		}
+
+		[HttpPost("MakePlayerOffline")]
+		public async Task<IActionResult> MakePlayerOffline() {
+			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
+			if (!player.IsOnline) return BadRequest("User is already offline");
+			player.IsOnline = false;
+			_dbContext.Players.Update(player);
+			await _dbContext.SaveChangesAsync();
+			return Ok();
+		}
+
+		[HttpPost("MakePlayerOnline")]
+		public async Task<IActionResult> MakePlayerOnline() {
+			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
+			if (player.IsOnline) return BadRequest("User is already online");
+			player.IsOnline = true;
+			_dbContext.Players.Update(player);
+			await _dbContext.SaveChangesAsync();
+			return Ok();
+		}
+
+		[HttpGet("FindOpponent")]
+		public async Task<ActionResult<PlayerDto>> FindOpponent() {
+			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
+			var opponents = _dbContext.Players.Where(p => p.UserId != UserId && p.Level == player.Level)
+				.Include(p=>p.Camp)
+				.ThenInclude(c=>c.Dungeons)
+				.ThenInclude(d=>d.Slots)
+				.ThenInclude(s=>s.DefenceItem)
+				.Include(p=>p.Weapons)
+				.Include(p=>p.Shields)
+				.ToList();
+			if (opponents.Count == 0)
+				return NotFound("There is no opponent");
+
+			Player opponent = null;
+
+			if (opponents.Count > 1) {
+				opponent = opponents.OrderBy(o => Guid.NewGuid()).First();
+			}else if (opponents.Count == 1) {
+				opponent = opponents.First();
+			}
+
+			var dto = _mapper.Map<PlayerDto>(opponent);
+			return Ok(dto);
 		}
 	}
 }

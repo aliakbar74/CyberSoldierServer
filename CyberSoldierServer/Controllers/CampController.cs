@@ -20,7 +20,7 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost]
-		public async Task<ActionResult> SetWorld([FromBody] BaseInsertDto model) {
+		public async Task<ActionResult> SetWorld([FromBody] CampInsertDto model) {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(x => x.UserId == UserId);
 
 			if (player == null)
@@ -39,35 +39,21 @@ namespace CyberSoldierServer.Controllers {
 			return Ok();
 		}
 
-		// [HttpGet("{id}")]
-		// [Authorize(Roles = "Admin")]
-		// public async Task<IActionResult> GetWorld(int id) {
-		// 	var player = await _dbContext.Players.Where(p => p.UserId == id)
-		// 		.Include(p => p.User)
-		// 		.Include(p=>p.PlayerBase)
-		// 		.ThenInclude(p => p.Dungeons)
-		// 		.ThenInclude(d=>d.Dungeon)
-		// 		.Include(p=>p.PlayerBase)
-		// 		.ThenInclude(p => p.Dungeons)
-		// 		.ThenInclude(d => d.Slots)
-		// 		.ThenInclude(s=>s.Slot)
-		// 		.Include(p=>p.PlayerBase)
-		// 		.ThenInclude(p => p.Dungeons)
-		// 		.ThenInclude(d => d.DefenceItems)
-		// 		.ThenInclude(d=>d.DefenceItem)
-		// 		.Include(p=>p.PlayerBase)
-		// 		.ThenInclude(p => p.Cpus)
-		// 		.ThenInclude(c=>c.Cpu)
-		// 		.Include(p=>p.PlayerBase)
-		// 		.ThenInclude(p => p.Server)
-		// 		.FirstOrDefaultAsync();
-		// 	if (player == null)
-		// 		return NotFound("player not found for this id");
-		//
-		// 	var playerDto = _mapper.Map<PlayerDto>(player);
-		// 	playerDto.UserName = player.User.UserName;
-		//
-		// 	return Ok(playerDto);
-		// }
+		[HttpGet("{id}")]
+		public async Task<IActionResult> GetWorld() {
+			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
+			var camp = await _dbContext.PlayerCamps.Where(c => c.PlayerId == player.Id)
+				.Include(p => p.Dungeons)
+				.ThenInclude(d => d.Slots)
+				.ThenInclude(s => s.DefenceItem)
+				.Include(p => p.Cpus)
+				.FirstOrDefaultAsync();
+			if (camp == null)
+				return NotFound("Camp not found for this id");
+
+			var playerDto = _mapper.Map<CampInsertDto>(camp);
+
+			return Ok(playerDto);
+		}
 	}
 }
