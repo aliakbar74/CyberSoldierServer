@@ -1,7 +1,7 @@
 ﻿using CyberSoldierServer.Models.BaseModels;
 
 namespace CyberSoldierServer.Models.PlayerModels {
-	public class ServerCpu {
+	public class CampCpu {
 		public int Id { get; set; }
 
 		public int SlotId { get; set; }

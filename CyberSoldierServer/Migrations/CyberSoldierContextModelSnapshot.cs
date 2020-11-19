@@ -184,8 +184,8 @@ namespace CyberSoldierServer.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("Value")
-                        .HasColumnType("integer");
+                    b.Property<long>("Value")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -254,8 +254,8 @@ namespace CyberSoldierServer.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("Value")
-                        .HasColumnType("integer");
+                    b.Property<long>("Value")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -281,6 +281,31 @@ namespace CyberSoldierServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Weapons");
+                });
+
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.CampCpu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CampId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CpuId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SlotId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampId");
+
+                    b.HasIndex("CpuId");
+
+                    b.ToTable("ServerCpus");
                 });
 
             modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.CampDungeon", b =>
@@ -334,8 +359,8 @@ namespace CyberSoldierServer.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("Gem")
-                        .HasColumnType("integer");
+                    b.Property<long>("Gem")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsOnline")
                         .HasColumnType("boolean");
@@ -343,8 +368,8 @@ namespace CyberSoldierServer.Migrations
                     b.Property<int>("Level")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Token")
-                        .HasColumnType("integer");
+                    b.Property<long>("Token")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -422,31 +447,6 @@ namespace CyberSoldierServer.Migrations
                     b.HasIndex("WeaponId");
 
                     b.ToTable("PlayerWeapons");
-                });
-
-            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.ServerCpu", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int>("CampId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("CpuId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SlotId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CampId");
-
-                    b.HasIndex("CpuId");
-
-                    b.ToTable("ServerCpus");
                 });
 
             modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.SlotDefenceItem", b =>
@@ -573,6 +573,21 @@ namespace CyberSoldierServer.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.CampCpu", b =>
+                {
+                    b.HasOne("CyberSoldierServer.Models.PlayerModels.PlayerCamp", "Camp")
+                        .WithMany("Cpus")
+                        .HasForeignKey("CampId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CyberSoldierServer.Models.BaseModels.Cpu", "Cpu")
+                        .WithMany()
+                        .HasForeignKey("CpuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.CampDungeon", b =>
                 {
                     b.HasOne("CyberSoldierServer.Models.PlayerModels.PlayerCamp", "Camp")
@@ -653,21 +668,6 @@ namespace CyberSoldierServer.Migrations
                     b.HasOne("CyberSoldierServer.Models.BaseModels.Weapon", "Weapon")
                         .WithMany()
                         .HasForeignKey("WeaponId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.ServerCpu", b =>
-                {
-                    b.HasOne("CyberSoldierServer.Models.PlayerModels.PlayerCamp", "Camp")
-                        .WithMany("Cpus")
-                        .HasForeignKey("CampId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CyberSoldierServer.Models.BaseModels.Cpu", "Cpu")
-                        .WithMany()
-                        .HasForeignKey("CpuId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

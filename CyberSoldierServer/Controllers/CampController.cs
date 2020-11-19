@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using CyberSoldierServer.Data;
-using CyberSoldierServer.Dtos.PlayerSetWorldDtos;
+using CyberSoldierServer.Dtos.EjectDtos;
+using CyberSoldierServer.Dtos.InsertDtos;
 using CyberSoldierServer.Models.PlayerModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,14 +45,20 @@ namespace CyberSoldierServer.Controllers {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
 			var camp = await _dbContext.PlayerCamps.Where(c => c.PlayerId == player.Id)
 				.Include(p => p.Dungeons)
+				.ThenInclude(d=>d.Dungeon)
+				.Include(p=>p.Dungeons)
+				.ThenInclude(d => d.Slots)
+				.ThenInclude(s=>s.Slot)
+				.Include(p=>p.Dungeons)
 				.ThenInclude(d => d.Slots)
 				.ThenInclude(s => s.DefenceItem)
 				.Include(p => p.Cpus)
+				.ThenInclude(c=>c.Cpu)
 				.FirstOrDefaultAsync();
 			if (camp == null)
 				return NotFound("Camp not found for this id");
 
-			var playerDto = _mapper.Map<CampInsertDto>(camp);
+			var playerDto = _mapper.Map<PlayerCampDto>(camp);
 
 			return Ok(playerDto);
 		}

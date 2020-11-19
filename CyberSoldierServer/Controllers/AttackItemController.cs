@@ -3,7 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CyberSoldierServer.Data;
-using CyberSoldierServer.Dtos.PlayerSetWorldDtos;
+using CyberSoldierServer.Dtos.EjectDtos;
+using CyberSoldierServer.Dtos.InsertDtos;
 using CyberSoldierServer.Models.BaseModels;
 using CyberSoldierServer.Models.PlayerModels;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost("SetWeapon")]
-		public async Task<IActionResult> SetWeapon([FromBody] WeaponDto weaponDto) {
+		public async Task<IActionResult> SetWeapon([FromBody] WeaponInsertDto weaponDto) {
 			var player = await _db.Players.FirstOrDefaultAsync(p=>p.UserId==UserId);
 			var weapon = _mapper.Map<PlayerWeapon>(weaponDto);
 
@@ -36,18 +37,18 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpGet("GetWeapons")]
-		public async Task<ActionResult<WeaponDto>> GetWeapons() {
+		public async Task<ActionResult<ICollection<PlayerWeaponDto>>> GetWeapons() {
 			var player = await _db.Players.Where(p => p.UserId == UserId).Include(p => p.Weapons).FirstOrDefaultAsync();
 			if (player.Weapons.Count==0) {
 				return NotFound("This player has no weapon");
 			}
 
-			var weapons = _mapper.Map<ICollection<WeaponDto>>(player.Weapons);
+			var weapons = _mapper.Map<ICollection<PlayerWeaponDto>>(player.Weapons);
 			return Ok(weapons);
 		}
 
 		[HttpPost("SetShield")]
-		public async Task<IActionResult> SetShield([FromBody] ShieldDto shieldDto) {
+		public async Task<IActionResult> SetShield([FromBody] ShieldInsertDto shieldDto) {
 			var player = await _db.Players.FirstOrDefaultAsync(p=>p.UserId==UserId);
 			var shield = _mapper.Map<PlayerShield>(shieldDto);
 
@@ -62,13 +63,13 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpGet("GetShields")]
-		public async Task<ActionResult<WeaponDto>> GetShields() {
+		public async Task<ActionResult<ICollection<PlayerShieldDto>>> GetShields() {
 			var player = await _db.Players.Where(p => p.UserId == UserId).Include(p => p.Shields).FirstOrDefaultAsync();
 			if (player.Shields.Count==0) {
 				return NotFound("This player has no Shield");
 			}
 
-			var shields = _mapper.Map<ICollection<ShieldDto>>(player.Shields);
+			var shields = _mapper.Map<ICollection<PlayerShieldDto>>(player.Shields);
 			return Ok(shields);
 		}
 	}

@@ -13,6 +13,6 @@ namespace CyberSoldierServer.Models.PlayerModels {
 		public int ServerId { get; set; }
 
 		public ICollection<CampDungeon> Dungeons { get; set; }
-		public ICollection<ServerCpu> Cpus { get; set; }
+		public ICollection<CampCpu> Cpus { get; set; }
 	}
 }

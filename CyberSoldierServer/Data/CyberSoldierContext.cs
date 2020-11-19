@@ -27,7 +27,7 @@ namespace CyberSoldierServer.Data {
 		// user models
 		public DbSet<Player> Players { get; set; }
 		public DbSet<PlayerCamp> PlayerCamps { get; set; }
-		public DbSet<ServerCpu> ServerCpus { get; set; }
+		public DbSet<CampCpu> ServerCpus { get; set; }
 		public DbSet<GemPack> GemPacks { get; set; }
 		public DbSet<TokenPack> TokenPacks { get; set; }
 		public DbSet<CampDungeon> PlayerDungeons { get; set; }

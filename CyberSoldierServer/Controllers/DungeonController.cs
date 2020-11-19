@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using CyberSoldierServer.Data;
-using CyberSoldierServer.Dtos.PlayerSetWorldDtos;
+using CyberSoldierServer.Dtos.EjectDtos;
+using CyberSoldierServer.Dtos.InsertDtos;
 using CyberSoldierServer.Models.PlayerModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ namespace CyberSoldierServer.Controllers {
 			_mapper = mapper;
 		}
 
-		[HttpPost]
+		[HttpPost("AddDungeon")]
 		public async Task<IActionResult> AddDungeon([FromBody] DungeonInsertDto model) {
 			var dungeon = _mapper.Map<CampDungeon>(model);
 			var player = await _dbContext.Players.Where(p => p.UserId == UserId).Include(p=>p.Camp).FirstOrDefaultAsync();
@@ -29,7 +30,7 @@ namespace CyberSoldierServer.Controllers {
 			return Ok();
 		}
 
-		[HttpPost("{id}")]
+		[HttpPost("UpgradeDungeon/{id}")]
 		public async Task<IActionResult> UpgradeDungeon(int id) {
 			var playerDungeon = await _dbContext.PlayerDungeons.Where(d => d.Id == id)
 				.Include(d=>d.Dungeon).FirstOrDefaultAsync();
@@ -45,6 +46,32 @@ namespace CyberSoldierServer.Controllers {
 			playerDungeon.Dungeon = dungeon;
 			_dbContext.PlayerDungeons.Update(playerDungeon);
 
+			await _dbContext.SaveChangesAsync();
+			return Ok();
+		}
+
+		[HttpPost("RemoveDungeon/{id}")]
+		public async Task<IActionResult> RemoveDungeon(int id) {
+			var dungeon = await _dbContext.PlayerDungeons.FirstOrDefaultAsync(d => d.Id == id);
+			if (dungeon == null)
+				return NotFound("Dungeon not found");
+
+			_dbContext.PlayerDungeons.Remove(dungeon);
+			await _dbContext.SaveChangesAsync();
+			return Ok();
+		}
+
+		//todo : make body for this
+		[HttpPost("ChangeDungeon")]
+		public async Task<IActionResult> ChangeDungeon([FromHeader]int preId, [FromHeader]int nextId) {
+			var dungeon = await _dbContext.PlayerDungeons.FirstOrDefaultAsync(d => d.Id == preId);
+			if (dungeon == null)
+				return NotFound("Dungeon not found");
+
+			if (!await _dbContext.Dungeons.AnyAsync(d => d.Id == nextId))
+				return NotFound("New Dungeon not found");
+
+			dungeon.DungeonId = nextId;
 			await _dbContext.SaveChangesAsync();
 			return Ok();
 		}

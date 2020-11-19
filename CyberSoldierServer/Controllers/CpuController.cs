@@ -2,8 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using CyberSoldierServer.Data;
-using CyberSoldierServer.Dtos.PlayerDtos;
-using CyberSoldierServer.Dtos.PlayerSetWorldDtos;
+using CyberSoldierServer.Dtos.InsertDtos;
 using CyberSoldierServer.Models.PlayerModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +19,7 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> AddCpu([FromBody] ServerCpuDto model) {
+		public async Task<IActionResult> AddCpu([FromBody] ServerCpuInsertDto model) {
 			var player = await _dbContext.Players.Where(p=>p.UserId==UserId)
 				.Include(p=>p.Camp)
 				.ThenInclude(p => p.Server)
@@ -33,7 +32,7 @@ namespace CyberSoldierServer.Controllers {
 			if (player.Camp.Server.CpuCount <= player.Camp.Cpus.Count)
 				return BadRequest($"You already have {player.Camp.Server.CpuCount} cpu");
 
-			var cpu = _mapper.Map<ServerCpu>(model);
+			var cpu = _mapper.Map<CampCpu>(model);
 			cpu.CampId = player.Camp.Id;
 
 			await _dbContext.ServerCpus.AddAsync(cpu);

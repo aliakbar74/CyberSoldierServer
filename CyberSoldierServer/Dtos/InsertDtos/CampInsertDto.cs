@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using CyberSoldierServer.Dtos.PlayerDtos;
 
-namespace CyberSoldierServer.Dtos.PlayerSetWorldDtos {
+namespace CyberSoldierServer.Dtos.InsertDtos {
 	public class CampInsertDto {
 		public int ServerId { get; set; }
 		public ICollection<DungeonInsertDto> Dungeons { get; set; }
-		public ICollection<ServerCpuDto> Cpus { get; set; }
+		public ICollection<ServerCpuInsertDto> Cpus { get; set; }
 	}
 }

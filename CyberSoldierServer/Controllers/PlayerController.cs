@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CyberSoldierServer.Data;
-using CyberSoldierServer.Dtos.PlayerDtos;
+using CyberSoldierServer.Dtos.EjectDtos;
 using CyberSoldierServer.Models.PlayerModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +38,7 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost("AddGemsUnLimit/{value}")]
-		public async Task<IActionResult> AddGemUnLimit(int value) {
+		public async Task<IActionResult> AddGemUnLimit(uint value) {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
 			if (player == null)
 				return NotFound("Player not found");
@@ -50,7 +50,7 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost("AddTokenUnLimit/{value}")]
-		public async Task<IActionResult> AddTokenUnLimit(int value) {
+		public async Task<IActionResult> AddTokenUnLimit(uint value) {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
 			if (player == null)
 				return NotFound("Player not found");
