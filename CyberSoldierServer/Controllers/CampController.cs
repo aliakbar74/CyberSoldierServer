@@ -40,7 +40,7 @@ namespace CyberSoldierServer.Controllers {
 			return Ok();
 		}
 
-		[HttpGet("{id}")]
+		[HttpGet("GetWorld")]
 		public async Task<IActionResult> GetWorld() {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
 			var camp = await _dbContext.PlayerCamps.Where(c => c.PlayerId == player.Id)
