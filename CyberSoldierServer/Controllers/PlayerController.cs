@@ -98,6 +98,32 @@ namespace CyberSoldierServer.Controllers {
 			return Ok(new {token});
 		}
 
+		[HttpPost("RemoveToken/{value}")]
+		public async Task<IActionResult> RemoveToken(uint value) {
+			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
+			if (player == null)
+				return NotFound("Player not found");
+
+			if (player.Token < value)
+				return BadRequest("player does not have has that amount of token");
+			player.Token -= value;
+			await _dbContext.SaveChangesAsync();
+			return Ok(new {player.Token});
+		}
+
+		[HttpPost("RemoveGem/{value}")]
+		public async Task<IActionResult> RemoveGem(uint value) {
+			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
+			if (player == null)
+				return NotFound("Player not found");
+
+			if (player.Gem < value)
+				return BadRequest("player does not have has that amount of Gem");
+			player.Gem -= value;
+			await _dbContext.SaveChangesAsync();
+			return Ok(new {player.Gem});
+		}
+
 		[HttpPost("MakePlayerOffline")]
 		public async Task<IActionResult> MakePlayerOffline() {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
@@ -122,12 +148,12 @@ namespace CyberSoldierServer.Controllers {
 		public async Task<ActionResult<PlayerDto>> FindOpponent() {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
 			var opponents = _dbContext.Players.Where(p => p.UserId != UserId && p.Level == player.Level)
-				.Include(p=>p.Camp)
-				.ThenInclude(c=>c.Dungeons)
-				.ThenInclude(d=>d.Slots)
-				.ThenInclude(s=>s.DefenceItem)
-				.Include(p=>p.Weapons)
-				.Include(p=>p.Shields)
+				.Include(p => p.Camp)
+				.ThenInclude(c => c.Dungeons)
+				.ThenInclude(d => d.Slots)
+				.ThenInclude(s => s.DefenceItem)
+				.Include(p => p.Weapons)
+				.Include(p => p.Shields)
 				.ToList();
 			if (opponents.Count == 0)
 				return NotFound("There is no opponent");
@@ -136,7 +162,7 @@ namespace CyberSoldierServer.Controllers {
 
 			if (opponents.Count > 1) {
 				opponent = opponents.OrderBy(o => Guid.NewGuid()).First();
-			}else if (opponents.Count == 1) {
+			} else if (opponents.Count == 1) {
 				opponent = opponents.First();
 			}
 

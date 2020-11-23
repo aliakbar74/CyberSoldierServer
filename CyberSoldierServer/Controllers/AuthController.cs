@@ -49,15 +49,20 @@ namespace CyberSoldierServer.Controllers {
 		[HttpPost("SignUp")]
 		public async Task<IActionResult> SignUp(UserSignUpDto userSignUpDto) {
 			var user = _mapper.Map<UserSignUpDto, AppUser>(userSignUpDto);
-			var userCreateResult = await _userManager.CreateAsync(user, userSignUpDto.Password);
 
 			if (!string.IsNullOrEmpty(userSignUpDto.Email)) {
 				if (!ModelState.IsValid) {
 					return BadRequest();
 				}
+
+				if (await _userManager.FindByEmailAsync(user.Email) != null) {
+
+					var error = _userManager.ErrorDescriber.DuplicateEmail(user.Email);
+					return Problem($"{_convertErrorToCode.ConvertErrorToCode(error.Code).ToString()} : {error.Description}", null, 500);
+				}
 			}
 
-
+			var userCreateResult = await _userManager.CreateAsync(user, userSignUpDto.Password);
 			if (userCreateResult.Succeeded) {
 				var player = new Player {
 					UserId = user.Id
