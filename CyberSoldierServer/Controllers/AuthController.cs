@@ -12,6 +12,7 @@ using CyberSoldierServer.Models.Auth;
 using CyberSoldierServer.Models.PlayerModels;
 using CyberSoldierServer.Services;
 using CyberSoldierServer.Settings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace CyberSoldierServer.Controllers {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class AuthController : ControllerBase {
+	public class AuthController : AuthApiController {
 		private readonly IMapper _mapper;
 		private readonly UserManager<AppUser> _userManager;
 		private readonly RoleManager<Role> _roleManager;
@@ -46,6 +47,7 @@ namespace CyberSoldierServer.Controllers {
 			_jwtSettings = jwtSettings.Value;
 		}
 
+		[AllowAnonymous]
 		[HttpPost("SignUp")]
 		public async Task<IActionResult> SignUp(UserSignUpDto userSignUpDto) {
 			var user = _mapper.Map<UserSignUpDto, AppUser>(userSignUpDto);
@@ -77,6 +79,7 @@ namespace CyberSoldierServer.Controllers {
 			return Problem($"{code.ToString()} : {userCreateResult.Errors.First().Description}", null, 500);
 		}
 
+		[AllowAnonymous]
 		[HttpPost("SignIn")]
 		public async Task<IActionResult> SignIn(UserSignUpDto userDto) {
 			var user = _userManager.Users.SingleOrDefault(u => u.UserName == userDto.UserName);
@@ -98,10 +101,33 @@ namespace CyberSoldierServer.Controllers {
 			return BadRequest("User name or pass is incorrect!");
 		}
 
+		[HttpPost("ChangeUserName/{newUserName}")]
+		public async Task<IActionResult> ChangeUserName(string newUserName) {
+			var user = await _userManager.FindByIdAsync(UserId.ToString());
+			var result = await _userManager.SetUserNameAsync(user, newUserName);
+			if (!result.Succeeded) {
+				var code = _convertErrorToCode.ConvertErrorToCode(result.Errors.First().Code);
+				return Problem($"{code.ToString()} : {result.Errors.First().Description}", null, 500);
+			}
+
+			return Ok();
+		}
+
+		[HttpPost("ChangePassword/{newPassword}")]
+		public async Task<IActionResult> ChangePassword(string newPassword) {
+			var user = await _userManager.FindByIdAsync(UserId.ToString());
+			var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+			var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+			if (!result.Succeeded) {
+				var code = _convertErrorToCode.ConvertErrorToCode(result.Errors.First().Code);
+				return Problem($"{code.ToString()} : {result.Errors.First().Description}", null, 500);
+			}
+			return Ok();
+		}
+
 		[HttpPost("CreateRoles")]
 		public async Task<IActionResult> CreateRoles() {
 			var superUser = new AppUser {
-				// UserName = _configuration.GetValue<string>("SuperUser:UserName")
 				UserName = _superUser.UserName
 			};
 
@@ -110,7 +136,6 @@ namespace CyberSoldierServer.Controllers {
 				await _roleManager.CreateAsync(role);
 			}
 
-			// var pass = _configuration.GetValue<string>("SuperUser:Password");
 			var pass = _superUser.Password;
 			var user = await _userManager.FindByNameAsync(superUser.UserName);
 
