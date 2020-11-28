@@ -12,6 +12,7 @@ using CyberSoldierServer.Models.Auth;
 using CyberSoldierServer.Models.PlayerModels;
 using CyberSoldierServer.Services;
 using CyberSoldierServer.Settings;
+using EmailService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -32,17 +33,18 @@ namespace CyberSoldierServer.Controllers {
 		private readonly SuperUser _superUser;
 		private readonly CyberSoldierContext _dbContext;
 		private readonly IConvertErrorToCodeService _convertErrorToCode;
-
+		private readonly IEmailSender _emailSender;
 
 		public AuthController(IMapper mapper, UserManager<AppUser> userManager, RoleManager<Role> roleManager,
 			IConfiguration configuration, IOptions<JwtSettings> jwtSettings, CyberSoldierContext dbContext,
-			IOptions<SuperUser> superUser, IConvertErrorToCodeService convertErrorToCode) {
+			IOptions<SuperUser> superUser, IConvertErrorToCodeService convertErrorToCode, IEmailSender emailSender) {
 			_mapper = mapper;
 			_userManager = userManager;
 			_roleManager = roleManager;
 			_configuration = configuration;
 			_dbContext = dbContext;
 			_convertErrorToCode = convertErrorToCode;
+			_emailSender = emailSender;
 			_superUser = superUser.Value;
 			_jwtSettings = jwtSettings.Value;
 		}
@@ -52,13 +54,15 @@ namespace CyberSoldierServer.Controllers {
 		public async Task<IActionResult> SignUp(UserSignUpDto userSignUpDto) {
 			var user = _mapper.Map<UserSignUpDto, AppUser>(userSignUpDto);
 
+			var message = new Message(new[] {userSignUpDto.Email}, "Test email", "this is test email");
+			await _emailSender.SendEmail(message);
+
 			if (!string.IsNullOrEmpty(userSignUpDto.Email)) {
 				if (!ModelState.IsValid) {
 					return BadRequest();
 				}
 
 				if (await _userManager.FindByEmailAsync(user.Email) != null) {
-
 					var error = _userManager.ErrorDescriber.DuplicateEmail(user.Email);
 					return Problem($"{_convertErrorToCode.ConvertErrorToCode(error.Code).ToString()} : {error.Description}", null, 500);
 				}
@@ -72,6 +76,7 @@ namespace CyberSoldierServer.Controllers {
 				player.IsOnline = true;
 				await _dbContext.Players.AddAsync(player);
 				await _dbContext.SaveChangesAsync();
+
 				return Ok();
 			}
 
@@ -122,6 +127,20 @@ namespace CyberSoldierServer.Controllers {
 				var code = _convertErrorToCode.ConvertErrorToCode(result.Errors.First().Code);
 				return Problem($"{code.ToString()} : {result.Errors.First().Description}", null, 500);
 			}
+
+			return Ok();
+		}
+
+		[HttpPost("ChangeEmail/{newEmail}")]
+		public async Task<IActionResult> ChangeEmail(string newEmail) {
+			var user = await _userManager.FindByIdAsync(UserId.ToString());
+			var token = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
+			var result = await _userManager.ChangeEmailAsync(user, newEmail, token);
+			if (!result.Succeeded) {
+				var code = _convertErrorToCode.ConvertErrorToCode(result.Errors.First().Code);
+				return Problem($"{code.ToString()} : {result.Errors.First().Description}", null, 500);
+			}
+
 			return Ok();
 		}
 

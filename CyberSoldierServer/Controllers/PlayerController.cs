@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CyberSoldierServer.Data;
 using CyberSoldierServer.Dtos.EjectDtos;
+using CyberSoldierServer.Models.Auth;
 using CyberSoldierServer.Models.PlayerModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +15,13 @@ namespace CyberSoldierServer.Controllers {
 	[Route("api/[controller]")]
 	public class PlayerController : AuthApiController {
 		private readonly CyberSoldierContext _dbContext;
+		private readonly UserManager<AppUser> _userManager;
 		private readonly IMapper _mapper;
 
-		public PlayerController(CyberSoldierContext dbContext, IMapper mapper) {
+		public PlayerController(CyberSoldierContext dbContext, IMapper mapper, UserManager<AppUser> userManager) {
 			_dbContext = dbContext;
 			_mapper = mapper;
+			_userManager = userManager;
 		}
 
 		[HttpPost("AddGems/{gemId}")]
@@ -148,10 +152,16 @@ namespace CyberSoldierServer.Controllers {
 		public async Task<ActionResult<PlayerDto>> FindOpponent() {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
 			var opponents = _dbContext.Players.Where(p => p.UserId != UserId && p.Level == player.Level)
+				.Include(p=>p.User)
 				.Include(p => p.Camp)
 				.ThenInclude(c => c.Dungeons)
 				.ThenInclude(d => d.Slots)
 				.ThenInclude(s => s.DefenceItem)
+				.Include(p=>p.Camp)
+				.ThenInclude(c=>c.Server)
+				.Include(p=>p.Camp)
+				.ThenInclude(c=>c.Cpus)
+				.ThenInclude(c=>c.Cpu)
 				.Include(p => p.Weapons)
 				.Include(p => p.Shields)
 				.ToList();

@@ -42,5 +42,9 @@
       <Compile Remove="Migrations\20200912132806_AddGemAndTokenToPlayer2.Designer.cs" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\EmailService\EmailService.csproj" />
+    </ItemGroup>
+
 
 </Project>

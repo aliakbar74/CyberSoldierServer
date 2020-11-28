@@ -17,7 +17,8 @@ namespace CyberSoldierServer.Profiles {
 			CreateMap<ShieldInsertDto, PlayerShield>();
 
 			//Eject
-			CreateMap<Player, PlayerDto>();
+			CreateMap<Player, PlayerDto>()
+				.ForMember(dto=>dto.UserName, opt=>opt.MapFrom(p=>p.User.UserName));
 
 			CreateMap<PlayerCamp, PlayerCampDto>();
 
