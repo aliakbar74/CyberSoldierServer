@@ -27,14 +27,14 @@ namespace CyberSoldierServer.Controllers {
 			if (player == null)
 				return NotFound("player not found for this user");
 
-			if (await _dbContext.PlayerCamps.AnyAsync(x => x.PlayerId == player.Id))
-				return BadRequest("you already have world");
+			var camp = await _dbContext.PlayerCamps.FirstOrDefaultAsync(c => c.PlayerId == player.Id);
+			if (camp != null)
+				_dbContext.PlayerCamps.Remove(camp);
 
 			var playerBase = _mapper.Map<PlayerCamp>(model);
 			playerBase.PlayerId = player.Id;
 
-			// player.PlayerBase.ServerId = playerBase.ServerId;
-			_dbContext.PlayerCamps.Update(playerBase);
+			await _dbContext.PlayerCamps.AddAsync(playerBase);
 			await _dbContext.SaveChangesAsync();
 
 			return Ok();
