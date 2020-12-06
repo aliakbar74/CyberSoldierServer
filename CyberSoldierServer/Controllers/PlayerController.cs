@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CyberSoldierServer.Data;
 using CyberSoldierServer.Dtos.EjectDtos;
+using CyberSoldierServer.Dtos.InsertDtos;
 using CyberSoldierServer.Models.Auth;
 using CyberSoldierServer.Models.PlayerModels;
 using Microsoft.AspNetCore.Identity;
@@ -152,16 +153,16 @@ namespace CyberSoldierServer.Controllers {
 		public async Task<ActionResult<PlayerDto>> FindOpponent() {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
 			var opponents = _dbContext.Players.Where(p => p.UserId != UserId && p.Level == player.Level)
-				.Include(p=>p.User)
+				.Include(p => p.User)
 				.Include(p => p.Camp)
 				.ThenInclude(c => c.Dungeons)
 				.ThenInclude(d => d.Slots)
 				.ThenInclude(s => s.DefenceItem)
-				.Include(p=>p.Camp)
-				.ThenInclude(c=>c.Server)
-				.Include(p=>p.Camp)
-				.ThenInclude(c=>c.Cpus)
-				.ThenInclude(c=>c.Cpu)
+				.Include(p => p.Camp)
+				.ThenInclude(c => c.Server)
+				.Include(p => p.Camp)
+				.ThenInclude(c => c.Cpus)
+				.ThenInclude(c => c.Cpu)
 				.Include(p => p.Weapons)
 				.Include(p => p.Shields)
 				.ToList();
@@ -178,6 +179,55 @@ namespace CyberSoldierServer.Controllers {
 
 			var dto = _mapper.Map<PlayerDto>(opponent);
 			return Ok(dto);
+		}
+
+		[HttpPost("AddAttacker")]
+		public async Task<IActionResult> AddAttacker([FromBody] AttackerInsertDto Dto) {
+			var victim = await _dbContext.Players.FirstOrDefaultAsync(p => p.Id == Dto.VictimId);
+			if (victim == null) {
+				return NotFound("Victim not found");
+			}
+
+			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
+			var attacker = new Attacker {
+				PlayerId = victim.Id,
+				AttackerPlayerId = player.Id,
+				CpuId = Dto.CpuId,
+				DungeonCount = Dto.DungeonCount
+			};
+
+			await _dbContext.Attackers.AddAsync(attacker);
+			await _dbContext.SaveChangesAsync();
+			return Ok();
+		}
+
+		[HttpGet("GetAttackers")]
+		public async Task<ActionResult<List<AttackerDto>>> GetAttackers() {
+			var player = await _dbContext.Players.Where(p => p.UserId == UserId)
+				.Include(p=>p.Attackers)
+				.ThenInclude(a=>a.Cpu)
+				.FirstOrDefaultAsync();
+
+			if (player.Attackers.Count == 0)
+				return NotFound("There is no attacker");
+
+			var dtos = new List<AttackerDto>(player.Attackers.Count);
+
+			foreach (var attacker in player.Attackers) {
+				var ap = await _dbContext.Players.Where(p => p.Id == attacker.AttackerPlayerId)
+					.Include(p=>p.User)
+					.FirstOrDefaultAsync();
+
+				var ad = new AttackerDto {
+					Cpu = _mapper.Map<CampCpuDto>(attacker.Cpu),
+					AttackerId = ap.Id,
+					Level = ap.Level,
+					UserName = ap.User.UserName
+				};
+				dtos.Add(ad);
+			}
+
+			return Ok(dtos);
 		}
 	}
 }

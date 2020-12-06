@@ -60,5 +60,14 @@ namespace CyberSoldierServer.Controllers {
 			await _dbContext.SaveChangesAsync();
 			return Ok();
 		}
+
+		[HttpPost("RemoveCpu")]
+		public async Task<IActionResult> RemoveCpu(int id) {
+			var cpu = await _dbContext.ServerCpus.FirstOrDefaultAsync(c => c.Id == id);
+			if (cpu == null) return NotFound("Cpu not found");
+			_dbContext.ServerCpus.Remove(cpu);
+			await _dbContext.SaveChangesAsync();
+			return Ok();
+		}
 	}
 }

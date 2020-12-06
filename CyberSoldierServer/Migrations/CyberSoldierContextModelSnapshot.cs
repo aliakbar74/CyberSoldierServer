@@ -126,6 +126,9 @@ namespace CyberSoldierServer.Migrations
                     b.Property<int>("Level")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Power")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("Cpus");
@@ -281,6 +284,34 @@ namespace CyberSoldierServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Weapons");
+                });
+
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.Attacker", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("AttackerPlayerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CpuId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DungeonCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CpuId");
+
+                    b.HasIndex("PlayerId");
+
+                    b.ToTable("Attackers");
                 });
 
             modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.CampCpu", b =>
@@ -571,6 +602,19 @@ namespace CyberSoldierServer.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.Attacker", b =>
+                {
+                    b.HasOne("CyberSoldierServer.Models.PlayerModels.CampCpu", "Cpu")
+                        .WithMany()
+                        .HasForeignKey("CpuId");
+
+                    b.HasOne("CyberSoldierServer.Models.PlayerModels.Player", "Player")
+                        .WithMany("Attackers")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.CampCpu", b =>

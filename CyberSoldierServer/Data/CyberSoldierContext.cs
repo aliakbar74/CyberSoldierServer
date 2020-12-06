@@ -15,7 +15,6 @@ namespace CyberSoldierServer.Data {
 		}
 
 		// base models
-		// public DbSet<Path> Paths { get; set; }
 		public DbSet<Server> Servers { get; set; }
 		public DbSet<Cpu> Cpus { get; set; }
 		public DbSet<Dungeon> Dungeons { get; set; }
@@ -35,5 +34,6 @@ namespace CyberSoldierServer.Data {
 		public DbSet<SlotDefenceItem> SlotDefenceItems { get; set; }
 		public DbSet<PlayerShield> PlayerShields { get; set; }
 		public DbSet<PlayerWeapon> PlayerWeapons { get; set; }
+		public DbSet<Attacker> Attackers { get; set; }
 	}
 }

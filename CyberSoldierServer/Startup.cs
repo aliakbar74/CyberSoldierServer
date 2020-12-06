@@ -95,8 +95,6 @@ namespace CyberSoldierServer {
 
 			context.Database.Migrate();
 
-			// app.UseHttpsRedirection();
-
 			app.UseRouting();
 			app.UseAuth();
 

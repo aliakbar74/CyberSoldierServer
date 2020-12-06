@@ -18,20 +18,20 @@ namespace CyberSoldierServer.Profiles {
 
 			//Eject
 			CreateMap<Player, PlayerDto>()
-				.ForMember(dto=>dto.UserName, opt=>opt.MapFrom(p=>p.User.UserName));
+				.ForMember(dto => dto.UserName, opt => opt.MapFrom(p => p.User.UserName));
 
 			CreateMap<PlayerCamp, PlayerCampDto>();
 
 			CreateMap<PlayerWeapon, PlayerWeaponDto>()
-				.ForMember(dto=>dto.BaseWeaponId, opt=>opt.MapFrom(w=>w.WeaponId))
-				.ForMember(dto=>dto.PrefabId, opt=>opt.MapFrom(w=>w.Weapon.PrefabId))
-				.ForMember(dto=>dto.Level, opt=>opt.MapFrom(w=>w.Weapon.Level))
-				.ForMember(dto=>dto.Type, opt=>opt.MapFrom(w=>w.Weapon.Type));
+				.ForMember(dto => dto.BaseWeaponId, opt => opt.MapFrom(w => w.WeaponId))
+				.ForMember(dto => dto.PrefabId, opt => opt.MapFrom(w => w.Weapon.PrefabId))
+				.ForMember(dto => dto.Level, opt => opt.MapFrom(w => w.Weapon.Level))
+				.ForMember(dto => dto.Type, opt => opt.MapFrom(w => w.Weapon.Type));
 
 			CreateMap<PlayerShield, PlayerShieldDto>()
-				.ForMember(dto=>dto.BaseShieldId, opt=>opt.MapFrom(s=>s.ShieldId))
-				.ForMember(dto=>dto.Level, opt=>opt.MapFrom(s=>s.Shield.Level))
-				.ForMember(dto=>dto.Type, opt=>opt.MapFrom(s=>s.Shield.Type));
+				.ForMember(dto => dto.BaseShieldId, opt => opt.MapFrom(s => s.ShieldId))
+				.ForMember(dto => dto.Level, opt => opt.MapFrom(s => s.Shield.Level))
+				.ForMember(dto => dto.Type, opt => opt.MapFrom(s => s.Shield.Type));
 
 
 			CreateMap<CampDungeon, CampDungeonDto>()
@@ -53,11 +53,10 @@ namespace CyberSoldierServer.Profiles {
 				.ForMember(dto => dto.DefenceType, opt => opt.MapFrom(s => s.Slot.DefenceType));
 
 			CreateMap<SlotDefenceItem, SlotDefenceItemDto>()
-				.ForMember(dto=>dto.Level, opt=>opt.MapFrom(d=>d.DefenceItem.Level))
-				.ForMember(dto=>dto.BaseDefenceItemId, opt=>opt.MapFrom(d=>d.DefenceItemId))
-				.ForMember(dto=>dto.DefenceType, opt=>opt.MapFrom(d=>d.DefenceItem.DefenceType))
-				.ForMember(dto=>dto.PrefabId, opt=>opt.MapFrom(d=>d.DefenceItem.PrefabId));
-
+				.ForMember(dto => dto.Level, opt => opt.MapFrom(d => d.DefenceItem.Level))
+				.ForMember(dto => dto.BaseDefenceItemId, opt => opt.MapFrom(d => d.DefenceItemId))
+				.ForMember(dto => dto.DefenceType, opt => opt.MapFrom(d => d.DefenceItem.DefenceType))
+				.ForMember(dto => dto.PrefabId, opt => opt.MapFrom(d => d.DefenceItem.PrefabId));
 		}
 	}
 }
