@@ -222,7 +222,8 @@ namespace CyberSoldierServer.Controllers {
 					Cpu = _mapper.Map<CampCpuDto>(attacker.Cpu),
 					AttackerId = ap.Id,
 					Level = ap.Level,
-					UserName = ap.User.UserName
+					UserName = ap.User.UserName,
+					DungeonCount = attacker.DungeonCount
 				};
 				dtos.Add(ad);
 			}

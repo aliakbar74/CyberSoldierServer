@@ -3,6 +3,7 @@
 		public int AttackerId { get; set; }
 		public string UserName { get; set; }
 		public int Level { get; set; }
+		public int DungeonCount { get; set; }
 		public CampCpuDto Cpu { get; set; }
 	}
 }
