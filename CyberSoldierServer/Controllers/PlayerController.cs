@@ -230,5 +230,14 @@ namespace CyberSoldierServer.Controllers {
 
 			return Ok(dtos);
 		}
+
+		[HttpPost("Attack/{id}")]
+		public async Task<ActionResult<PlayerDto>> Attack(int id) {
+			var victim = await _dbContext.Players.FirstOrDefaultAsync(p => p.Id == id);
+			if (victim == null)
+				return NotFound("Player not found");
+			var dto = _mapper.Map<PlayerDto>(victim);
+			return Ok(dto);
+		}
 	}
 }
