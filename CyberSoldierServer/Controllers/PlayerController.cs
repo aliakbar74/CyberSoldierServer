@@ -182,18 +182,24 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost("AddAttacker")]
-		public async Task<IActionResult> AddAttacker([FromBody] AttackerInsertDto Dto) {
-			var victim = await _dbContext.Players.FirstOrDefaultAsync(p => p.Id == Dto.VictimId);
+		public async Task<IActionResult> AddAttacker([FromBody] AttackerInsertDto dto) {
+			var victim = await _dbContext.Players.FirstOrDefaultAsync(p => p.Id == dto.VictimId);
 			if (victim == null) {
 				return NotFound("Victim not found");
 			}
 
-			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
+			var player = await _dbContext.Players.Where(p => p.UserId == UserId).Include(p=>p.Camp).FirstOrDefaultAsync();
+
+			if (dto.CpuId.HasValue) {
+				var cpu = await _dbContext.ServerCpus.FirstOrDefaultAsync(c => c.Id == dto.CpuId);
+				cpu.CampId = player.Camp.Id;
+			}
+
 			var attacker = new Attacker {
 				PlayerId = victim.Id,
 				AttackerPlayerId = player.Id,
-				CpuId = Dto.CpuId,
-				DungeonCount = Dto.DungeonCount
+				CpuId = dto.CpuId,
+				DungeonCount = dto.DungeonCount
 			};
 
 			await _dbContext.Attackers.AddAsync(attacker);

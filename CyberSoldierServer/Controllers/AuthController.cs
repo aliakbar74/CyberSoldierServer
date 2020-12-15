@@ -54,7 +54,6 @@ namespace CyberSoldierServer.Controllers {
 		public async Task<IActionResult> SignUp(UserSignUpDto userSignUpDto) {
 			var user = _mapper.Map<UserSignUpDto, AppUser>(userSignUpDto);
 
-
 			if (!string.IsNullOrEmpty(userSignUpDto.Email)) {
 				var message = new Message(new[] {userSignUpDto.Email}, "Test email", "this is test email");
 				await _emailSender.SendEmail(message);

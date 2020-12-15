@@ -6,9 +6,7 @@ using AutoMapper;
 using CyberSoldierServer.Data;
 using CyberSoldierServer.Dtos.EjectDtos;
 using CyberSoldierServer.Dtos.InsertDtos;
-using CyberSoldierServer.Models.BaseModels;
 using CyberSoldierServer.Models.PlayerModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
