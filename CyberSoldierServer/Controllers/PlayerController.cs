@@ -43,7 +43,7 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost("AddGemsUnLimit/{value}")]
-		public async Task<IActionResult> AddGemUnLimit(uint value) {
+		public async Task<IActionResult> AddGemUnLimit(int value) {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
 			if (player == null)
 				return NotFound("Player not found");
@@ -55,7 +55,7 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost("AddTokenUnLimit/{value}")]
-		public async Task<IActionResult> AddTokenUnLimit(uint value) {
+		public async Task<IActionResult> AddTokenUnLimit(int value) {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
 			if (player == null)
 				return NotFound("Player not found");
@@ -104,7 +104,7 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost("RemoveToken/{value}")]
-		public async Task<IActionResult> RemoveToken(uint value) {
+		public async Task<IActionResult> RemoveToken(int value) {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
 			if (player == null)
 				return NotFound("Player not found");
@@ -117,7 +117,7 @@ namespace CyberSoldierServer.Controllers {
 		}
 
 		[HttpPost("RemoveGem/{value}")]
-		public async Task<IActionResult> RemoveGem(uint value) {
+		public async Task<IActionResult> RemoveGem(int value) {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
 			if (player == null)
 				return NotFound("Player not found");

@@ -22,6 +22,7 @@ namespace CyberSoldierServer.Data {
 		public DbSet<DefenceItem> DefenceItems { get; set; }
 		public DbSet<Shield> Shields { get; set; }
 		public DbSet<Weapon>  Weapons{ get; set; }
+		public DbSet<Pool> Pools { get; set; }
 
 		// user models
 		public DbSet<Player> Players { get; set; }
@@ -35,5 +36,6 @@ namespace CyberSoldierServer.Data {
 		public DbSet<PlayerShield> PlayerShields { get; set; }
 		public DbSet<PlayerWeapon> PlayerWeapons { get; set; }
 		public DbSet<Attacker> Attackers { get; set; }
+		public DbSet<CampPool> CampPools { get; set; }
 	}
 }

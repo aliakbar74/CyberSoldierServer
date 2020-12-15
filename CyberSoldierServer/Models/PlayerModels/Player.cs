@@ -11,8 +11,8 @@ namespace CyberSoldierServer.Models.PlayerModels {
 		public bool IsOnline { get; set; }
 		public int Level { get; set; }
 		public PlayerCamp Camp { get; set; }
-		public uint Gem { get; set; }
-		public uint Token { get; set; }
+		public int Gem { get; set; }
+		public int Token { get; set; }
 		public ICollection<PlayerWeapon> Weapons { get; set; }
 		public ICollection<PlayerShield> Shields { get; set; }
 		public ICollection<Attacker> Attackers { get; set; }

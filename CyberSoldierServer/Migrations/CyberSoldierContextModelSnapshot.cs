@@ -187,12 +187,27 @@ namespace CyberSoldierServer.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<long>("Value")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Value")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.ToTable("GemPacks");
+                });
+
+            modelBuilder.Entity("CyberSoldierServer.Models.BaseModels.Pool", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Pools");
                 });
 
             modelBuilder.Entity("CyberSoldierServer.Models.BaseModels.Server", b =>
@@ -202,8 +217,8 @@ namespace CyberSoldierServer.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<long>("Capacity")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Capacity")
+                        .HasColumnType("integer");
 
                     b.Property<int>("CpuCount")
                         .HasColumnType("integer");
@@ -257,8 +272,8 @@ namespace CyberSoldierServer.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<long>("Value")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Value")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -361,6 +376,31 @@ namespace CyberSoldierServer.Migrations
                     b.ToTable("PlayerDungeons");
                 });
 
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.CampPool", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CampId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CurrentValue")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PoolId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampId");
+
+                    b.HasIndex("PoolId");
+
+                    b.ToTable("CampPools");
+                });
+
             modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.DungeonSlot", b =>
                 {
                     b.Property<int>("Id")
@@ -390,8 +430,8 @@ namespace CyberSoldierServer.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<long>("Gem")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Gem")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsOnline")
                         .HasColumnType("boolean");
@@ -399,8 +439,8 @@ namespace CyberSoldierServer.Migrations
                     b.Property<int>("Level")
                         .HasColumnType("integer");
 
-                    b.Property<long>("Token")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Token")
+                        .HasColumnType("integer");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -419,6 +459,9 @@ namespace CyberSoldierServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("LastCollectTime")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("PlayerId")
                         .HasColumnType("integer");
@@ -643,6 +686,21 @@ namespace CyberSoldierServer.Migrations
                     b.HasOne("CyberSoldierServer.Models.BaseModels.Dungeon", "Dungeon")
                         .WithMany()
                         .HasForeignKey("DungeonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CyberSoldierServer.Models.PlayerModels.CampPool", b =>
+                {
+                    b.HasOne("CyberSoldierServer.Models.PlayerModels.PlayerCamp", "Camp")
+                        .WithMany("Pools")
+                        .HasForeignKey("CampId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CyberSoldierServer.Models.BaseModels.Pool", "Pool")
+                        .WithMany()
+                        .HasForeignKey("PoolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

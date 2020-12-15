@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CyberSoldierServer.Data;
 using CyberSoldierServer.Dtos.EjectDtos;
 using CyberSoldierServer.Dtos.InsertDtos;
+using CyberSoldierServer.Models.BaseModels;
 using CyberSoldierServer.Models.PlayerModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,11 +31,14 @@ namespace CyberSoldierServer.Controllers {
 				return NotFound("player not found for this user");
 
 			var camp = await _dbContext.PlayerCamps.FirstOrDefaultAsync(c => c.PlayerId == player.Id);
-			if (camp != null)
-				_dbContext.PlayerCamps.Remove(camp);
 
 			var playerBase = _mapper.Map<PlayerCamp>(model);
 			playerBase.PlayerId = player.Id;
+
+			if (camp != null) {
+				playerBase.LastCollectTime = DateTime.Now;
+				_dbContext.PlayerCamps.Remove(camp);
+			}
 
 			await _dbContext.PlayerCamps.AddAsync(playerBase);
 			await _dbContext.SaveChangesAsync();
@@ -43,17 +49,22 @@ namespace CyberSoldierServer.Controllers {
 		[HttpGet("GetWorld")]
 		public async Task<IActionResult> GetWorld() {
 			var player = await _dbContext.Players.FirstOrDefaultAsync(p => p.UserId == UserId);
+
+			await Task.Run(() => RedirectToAction(nameof(GetServerToken)));
+
 			var camp = await _dbContext.PlayerCamps.Where(c => c.PlayerId == player.Id)
 				.Include(p => p.Dungeons)
-				.ThenInclude(d=>d.Dungeon)
-				.Include(p=>p.Dungeons)
+				.ThenInclude(d => d.Dungeon)
+				.Include(p => p.Dungeons)
 				.ThenInclude(d => d.Slots)
-				.ThenInclude(s=>s.Slot)
-				.Include(p=>p.Dungeons)
+				.ThenInclude(s => s.Slot)
+				.Include(p => p.Dungeons)
 				.ThenInclude(d => d.Slots)
 				.ThenInclude(s => s.DefenceItem)
 				.Include(p => p.Cpus)
-				.ThenInclude(c=>c.Cpu)
+				.ThenInclude(c => c.Cpu)
+				.Include(c => c.Pools)
+				.ThenInclude(p => p.Pool)
 				.FirstOrDefaultAsync();
 			if (camp == null)
 				return NotFound("Camp not found for this id");
@@ -61,6 +72,85 @@ namespace CyberSoldierServer.Controllers {
 			var playerDto = _mapper.Map<PlayerCampDto>(camp);
 
 			return Ok(playerDto);
+		}
+
+		[HttpGet("GetServerToken")]
+		public async Task<ActionResult<ServerTokenDto>> GetServerToken() {
+			//todo : Moein
+			var player = await _dbContext.Players
+				.Where(p => p.UserId == UserId)
+				.Include(p => p.Camp)
+				.ThenInclude(c => c.Server)
+				.Include(p => p.Camp)
+				.ThenInclude(c => c.Cpus)
+				.ThenInclude(c => c.Cpu)
+				.Include(p => p.Camp.Cpus)
+				.Include(p => p.Camp)
+				.ThenInclude(c => c.Pools)
+				.ThenInclude(p => p.Pool)
+				.FirstOrDefaultAsync();
+
+			var valueInPools = player.Camp.Pools.Sum(p => p.CurrentValue);
+			if (valueInPools > player.Camp.Pools.Sum(p => p.Pool.Capacity))
+				return BadRequest("Pools are full");
+
+			var elapsedTime = DateTime.Now.Subtract(player.Camp.LastCollectTime).Minutes;
+			var value = player.Camp.Cpus.Select(c => c.Cpu.Power).Sum(power => elapsedTime * power);
+
+			foreach (var pool in player.Camp.Pools) {
+				if (pool.CurrentValue + value < pool.Pool.Capacity) {
+					pool.CurrentValue += value;
+					break;
+				}
+
+				var empty = pool.Pool.Capacity - pool.CurrentValue;
+				pool.CurrentValue = pool.Pool.Capacity;
+				value -= empty;
+			}
+
+			player.Camp.LastCollectTime = DateTime.Now;
+
+			var serverToken = new ServerTokenDto {
+				ServerCapacity = player.Camp.Server.Capacity,
+				ServerCurrentValue = player.Token,
+				Pools = _mapper.Map<ICollection<CampPoolDto>>(player.Camp.Pools)
+			};
+
+			_dbContext.Players.Update(player);
+			await _dbContext.SaveChangesAsync();
+
+			return Ok(serverToken);
+		}
+
+		[HttpPost("CollectToken/{id}")]
+		public async Task<IActionResult> CollectToken(int id) {
+			var player = await _dbContext.Players
+				.Where(p => p.UserId == UserId)
+				.Include(p => p.Camp)
+				.ThenInclude(c => c.Pools)
+				.Include(p => p.Camp)
+				.ThenInclude(c => c.Server)
+				.FirstOrDefaultAsync();
+
+			var pool = player.Camp.Pools.First(p => p.Id == id);
+			if (pool == null)
+				return NotFound("Pool not found");
+
+			if (player.Camp.Server.Capacity <= player.Token)
+				return BadRequest("Server is full");
+
+			if (player.Camp.Server.Capacity < player.Token + pool.CurrentValue) {
+				var empty = player.Camp.Server.Capacity - player.Token;
+				player.Token = player.Camp.Server.Capacity;
+				pool.CurrentValue -= empty;
+			} else {
+				player.Token += pool.CurrentValue;
+				pool.CurrentValue = 0;
+			}
+
+			_dbContext.CampPools.Update(pool);
+			await _dbContext.SaveChangesAsync();
+			return Ok();
 		}
 	}
 }

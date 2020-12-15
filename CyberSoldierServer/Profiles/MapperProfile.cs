@@ -15,6 +15,7 @@ namespace CyberSoldierServer.Profiles {
 			CreateMap<SlotDefenceItemInsertDto, SlotDefenceItem>();
 			CreateMap<WeaponInsertDto, PlayerWeapon>();
 			CreateMap<ShieldInsertDto, PlayerShield>();
+			CreateMap<CampPoolInsertDto, CampPool>();
 
 			//Eject
 			CreateMap<Player, PlayerDto>()
@@ -57,6 +58,10 @@ namespace CyberSoldierServer.Profiles {
 				.ForMember(dto => dto.BaseDefenceItemId, opt => opt.MapFrom(d => d.DefenceItemId))
 				.ForMember(dto => dto.DefenceType, opt => opt.MapFrom(d => d.DefenceItem.DefenceType))
 				.ForMember(dto => dto.PrefabId, opt => opt.MapFrom(d => d.DefenceItem.PrefabId));
+
+			CreateMap<CampPool, CampPoolDto>()
+				.ForMember(dto => dto.BaseId, opt => opt.MapFrom(c => c.PoolId))
+				.ForMember(dto => dto.Capacity, opt => opt.MapFrom(p => p.Pool.Capacity));
 		}
 	}
 }

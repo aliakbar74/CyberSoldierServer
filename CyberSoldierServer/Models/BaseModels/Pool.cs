@@ -1,6 +1,6 @@
 ﻿namespace CyberSoldierServer.Models.BaseModels {
-	public class GemPack {
+	public class Pool {
 		public int Id { get; set; }
-		public int Value { get; set; }
+		public int Capacity { get; set; }
 	}
 }

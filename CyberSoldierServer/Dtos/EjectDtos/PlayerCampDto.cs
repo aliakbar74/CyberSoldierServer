@@ -7,5 +7,6 @@ namespace CyberSoldierServer.Dtos.EjectDtos {
 		public Server Server { get; set; }
 		public ICollection<CampDungeonDto> Dungeons { get; set; }
 		public ICollection<CampCpuDto> Cpus { get; set; }
+		public ICollection<CampPoolDto> Pools { get; set; }
 	}
 }
