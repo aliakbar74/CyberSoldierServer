@@ -44,7 +44,7 @@ namespace CyberSoldierServer.Profiles {
 
 			CreateMap<CampCpu, CampCpuDto>()
 				.ForMember(dto => dto.Level, opt => opt.MapFrom(c => c.Cpu.Level))
-				.ForMember(dto => dto.BaseCpuId, opt => opt.MapFrom(c => c.CpuId))
+				.ForMember(dto => dto.BaseCpuId, opt => opt.MapFrom(c => c.Cpu.Id))
 				.ForMember(dto => dto.CpuType, opt => opt.MapFrom(c => c.Cpu.CpuType))
 				.ForMember(dto=>dto.Power, opt=> opt.MapFrom(c=>c.Cpu.Power));
 
@@ -55,7 +55,7 @@ namespace CyberSoldierServer.Profiles {
 
 			CreateMap<SlotDefenceItem, SlotDefenceItemDto>()
 				.ForMember(dto => dto.Level, opt => opt.MapFrom(d => d.DefenceItem.Level))
-				.ForMember(dto => dto.BaseDefenceItemId, opt => opt.MapFrom(d => d.DefenceItemId))
+				.ForMember(dto => dto.BaseDefenceItemId, opt => opt.MapFrom(d => d.DefenceItem.Id))
 				.ForMember(dto => dto.DefenceType, opt => opt.MapFrom(d => d.DefenceItem.DefenceType))
 				.ForMember(dto => dto.PrefabId, opt => opt.MapFrom(d => d.DefenceItem.PrefabId));
 
