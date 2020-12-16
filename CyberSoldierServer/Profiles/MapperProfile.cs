@@ -46,7 +46,7 @@ namespace CyberSoldierServer.Profiles {
 				.ForMember(dto => dto.Level, opt => opt.MapFrom(c => c.Cpu.Level))
 				.ForMember(dto => dto.BaseCpuId, opt => opt.MapFrom(c => c.CpuId))
 				.ForMember(dto => dto.CpuType, opt => opt.MapFrom(c => c.Cpu.CpuType))
-				;
+				.ForMember(dto=>dto.Power, opt=> opt.MapFrom(c=>c.Cpu.Power));
 
 			CreateMap<DungeonSlot, DungeonSlotDto>()
 				.ForMember(dto => dto.Level, opt => opt.MapFrom(s => s.Slot.Level))
