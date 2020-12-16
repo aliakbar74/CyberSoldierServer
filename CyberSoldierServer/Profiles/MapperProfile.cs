@@ -24,13 +24,13 @@ namespace CyberSoldierServer.Profiles {
 			CreateMap<PlayerCamp, PlayerCampDto>();
 
 			CreateMap<PlayerWeapon, PlayerWeaponDto>()
-				.ForMember(dto => dto.BaseWeaponId, opt => opt.MapFrom(w => w.WeaponId))
+				.ForMember(dto => dto.BaseWeaponId, opt => opt.MapFrom(w => w.Weapon.Id))
 				.ForMember(dto => dto.PrefabId, opt => opt.MapFrom(w => w.Weapon.PrefabId))
 				.ForMember(dto => dto.Level, opt => opt.MapFrom(w => w.Weapon.Level))
 				.ForMember(dto => dto.Type, opt => opt.MapFrom(w => w.Weapon.Type));
 
 			CreateMap<PlayerShield, PlayerShieldDto>()
-				.ForMember(dto => dto.BaseShieldId, opt => opt.MapFrom(s => s.ShieldId))
+				.ForMember(dto => dto.BaseShieldId, opt => opt.MapFrom(s => s.Shield.Id))
 				.ForMember(dto => dto.Level, opt => opt.MapFrom(s => s.Shield.Level))
 				.ForMember(dto => dto.Type, opt => opt.MapFrom(s => s.Shield.Type));
 
@@ -40,7 +40,7 @@ namespace CyberSoldierServer.Profiles {
 				.ForMember(dto => dto.DungeonType, opt => opt.MapFrom(d => d.Dungeon.DungeonType))
 				.ForMember(dto => dto.PrefabId, opt => opt.MapFrom(d => d.Dungeon.PrefabId))
 				.ForMember(dto => dto.SlotCount, opt => opt.MapFrom(d => d.Dungeon.SlotCount))
-				.ForMember(dto => dto.BaseDungeonId, opt => opt.MapFrom(d => d.DungeonId));
+				.ForMember(dto => dto.BaseDungeonId, opt => opt.MapFrom(d => d.Dungeon.Id));
 
 			CreateMap<CampCpu, CampCpuDto>()
 				.ForMember(dto => dto.Level, opt => opt.MapFrom(c => c.Cpu.Level))
@@ -50,7 +50,7 @@ namespace CyberSoldierServer.Profiles {
 
 			CreateMap<DungeonSlot, DungeonSlotDto>()
 				.ForMember(dto => dto.Level, opt => opt.MapFrom(s => s.Slot.Level))
-				.ForMember(dto => dto.BaseSlotId, opt => opt.MapFrom(s => s.SlotId))
+				.ForMember(dto => dto.BaseSlotId, opt => opt.MapFrom(s => s.Slot.Id))
 				.ForMember(dto => dto.DefenceType, opt => opt.MapFrom(s => s.Slot.DefenceType));
 
 			CreateMap<SlotDefenceItem, SlotDefenceItemDto>()
@@ -60,7 +60,7 @@ namespace CyberSoldierServer.Profiles {
 				.ForMember(dto => dto.PrefabId, opt => opt.MapFrom(d => d.DefenceItem.PrefabId));
 
 			CreateMap<CampPool, CampPoolDto>()
-				.ForMember(dto => dto.BaseId, opt => opt.MapFrom(c => c.PoolId))
+				.ForMember(dto => dto.BaseId, opt => opt.MapFrom(c => c.Pool.Id))
 				.ForMember(dto => dto.Capacity, opt => opt.MapFrom(p => p.Pool.Capacity));
 		}
 	}
