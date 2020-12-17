@@ -23,6 +23,13 @@ namespace CyberSoldierServer.Profiles {
 
 			CreateMap<PlayerCamp, PlayerCampDto>();
 
+			CreateMap<CampDungeon, CampDungeonDto>()
+				.ForMember(dto => dto.Level, opt => opt.MapFrom(d => d.Dungeon.Level))
+				.ForMember(dto => dto.DungeonType, opt => opt.MapFrom(d => d.Dungeon.DungeonType))
+				.ForMember(dto => dto.PrefabId, opt => opt.MapFrom(d => d.Dungeon.PrefabId))
+				.ForMember(dto => dto.SlotCount, opt => opt.MapFrom(d => d.Dungeon.SlotCount))
+				.ForMember(dto => dto.BaseDungeonId, opt => opt.MapFrom(d => d.Dungeon.Id));
+
 			CreateMap<PlayerWeapon, PlayerWeaponDto>()
 				.ForMember(dto => dto.BaseWeaponId, opt => opt.MapFrom(w => w.Weapon.Id))
 				.ForMember(dto => dto.PrefabId, opt => opt.MapFrom(w => w.Weapon.PrefabId))
@@ -34,13 +41,6 @@ namespace CyberSoldierServer.Profiles {
 				.ForMember(dto => dto.Level, opt => opt.MapFrom(s => s.Shield.Level))
 				.ForMember(dto => dto.Type, opt => opt.MapFrom(s => s.Shield.Type));
 
-
-			CreateMap<CampDungeon, CampDungeonDto>()
-				.ForMember(dto => dto.Level, opt => opt.MapFrom(d => d.Dungeon.Level))
-				.ForMember(dto => dto.DungeonType, opt => opt.MapFrom(d => d.Dungeon.DungeonType))
-				.ForMember(dto => dto.PrefabId, opt => opt.MapFrom(d => d.Dungeon.PrefabId))
-				.ForMember(dto => dto.SlotCount, opt => opt.MapFrom(d => d.Dungeon.SlotCount))
-				.ForMember(dto => dto.BaseDungeonId, opt => opt.MapFrom(d => d.Dungeon.Id));
 
 			CreateMap<CampCpu, CampCpuDto>()
 				.ForMember(dto => dto.Level, opt => opt.MapFrom(c => c.Cpu.Level))
@@ -54,8 +54,8 @@ namespace CyberSoldierServer.Profiles {
 				.ForMember(dto => dto.DefenceType, opt => opt.MapFrom(s => s.Slot.DefenceType));
 
 			CreateMap<SlotDefenceItem, SlotDefenceItemDto>()
-				.ForMember(dto => dto.Level, opt => opt.MapFrom(d => d.DefenceItem.Level))
 				.ForMember(dto => dto.BaseDefenceItemId, opt => opt.MapFrom(d => d.DefenceItem.Id))
+				.ForMember(dto => dto.Level, opt => opt.MapFrom(d => d.DefenceItem.Level))
 				.ForMember(dto => dto.DefenceType, opt => opt.MapFrom(d => d.DefenceItem.DefenceType))
 				.ForMember(dto => dto.PrefabId, opt => opt.MapFrom(d => d.DefenceItem.PrefabId));
 

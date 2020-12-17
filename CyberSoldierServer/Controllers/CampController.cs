@@ -35,7 +35,7 @@ namespace CyberSoldierServer.Controllers {
 
 			var playerBase = _mapper.Map<PlayerCamp>(model);
 			playerBase.PlayerId = player.Id;
-			
+
 			if (camp != null) {
 				playerBase.LastCollectTime = DateTime.Now;
 				_dbContext.PlayerCamps.Remove(camp);
@@ -62,6 +62,7 @@ namespace CyberSoldierServer.Controllers {
 				.Include(p => p.Dungeons)
 				.ThenInclude(d => d.Slots)
 				.ThenInclude(s => s.DefenceItem)
+				.ThenInclude(d=>d.DefenceItem)
 				.Include(p => p.Cpus)
 				.ThenInclude(c => c.Cpu)
 				.Include(c => c.Pools)
