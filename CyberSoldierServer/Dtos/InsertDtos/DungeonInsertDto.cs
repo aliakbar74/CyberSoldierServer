@@ -3,6 +3,7 @@
 namespace CyberSoldierServer.Dtos.InsertDtos {
 	public class DungeonInsertDto {
 		public int DungeonId { get; set; }
+		public int PositionId { get; set; }
 		public ICollection<SlotInsertDto> Slots { get; set; }
 	}
 }

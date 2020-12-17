@@ -367,6 +367,9 @@ namespace CyberSoldierServer.Migrations
                     b.Property<int>("DungeonId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("PositionId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CampId");

@@ -4,6 +4,7 @@ using CyberSoldierServer.Models.BaseModels;
 namespace CyberSoldierServer.Models.PlayerModels {
 	public class CampDungeon {
 		public int Id { get; set; }
+		public int PositionId { get; set; }
 
 		public PlayerCamp Camp { get; set; }
 		public int CampId { get; set; }
