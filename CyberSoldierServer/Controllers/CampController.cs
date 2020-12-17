@@ -28,18 +28,15 @@ namespace CyberSoldierServer.Controllers {
 			if (player == null)
 				return NotFound("player not found for this user");
 
-			var camp = await _dbContext.PlayerCamps
-				.Where(c => c.PlayerId == player.Id)
-				.Include(c=>c.Pools)
-				.FirstOrDefaultAsync();
+			// var camp = await _dbContext.PlayerCamps.FirstOrDefaultAsync(c => c.PlayerId == player.Id);
 
 			var playerBase = _mapper.Map<PlayerCamp>(model);
 			playerBase.PlayerId = player.Id;
 
-			if (camp != null) {
-				playerBase.LastCollectTime = DateTime.Now;
-				_dbContext.PlayerCamps.Remove(camp);
-			}
+			// if (camp != null) {
+			// 	playerBase.LastCollectTime = DateTime.Now;
+			// 	_dbContext.PlayerCamps.Remove(camp);
+			// }
 
 			await _dbContext.PlayerCamps.AddAsync(playerBase);
 			await _dbContext.SaveChangesAsync();
@@ -62,7 +59,7 @@ namespace CyberSoldierServer.Controllers {
 				.Include(p => p.Dungeons)
 				.ThenInclude(d => d.Slots)
 				.ThenInclude(s => s.DefenceItem)
-				.ThenInclude(d=>d.DefenceItem)
+				.ThenInclude(d => d.DefenceItem)
 				.Include(p => p.Cpus)
 				.ThenInclude(c => c.Cpu)
 				.Include(c => c.Pools)
@@ -74,6 +71,25 @@ namespace CyberSoldierServer.Controllers {
 			var playerDto = _mapper.Map<PlayerCampDto>(camp);
 
 			return Ok(playerDto);
+		}
+
+		[HttpPost("UpdateWorld")]
+		public async Task<IActionResult> UpdateWorld([FromBody] CampInsertDto model) {
+			var player = await _dbContext.Players
+				.Where(x => x.UserId == UserId)
+				.Include(p=>p.Camp)
+				.FirstOrDefaultAsync();
+
+			if (player == null)
+				return NotFound("player not found for this user");
+
+			player.Camp = _mapper.Map<PlayerCamp>(model);
+			player.Camp.LastCollectTime = DateTime.Now;
+
+			_dbContext.PlayerCamps.Update(player.Camp);
+			await _dbContext.SaveChangesAsync();
+
+			return Ok();
 		}
 
 		[HttpGet("GetServerToken")]
