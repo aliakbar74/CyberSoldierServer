@@ -8,6 +8,7 @@ namespace CyberSoldierServer.Dtos.EjectDtos {
 		public int DungeonType { get; set; }
 		public int Level { get; set; }
 		public int SlotCount { get; set; }
+		public int PositionId { get; set; }
 		public ICollection<DungeonSlotDto> Slots { get; set; }
 	}
 }
