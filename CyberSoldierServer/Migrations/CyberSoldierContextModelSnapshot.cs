@@ -129,6 +129,9 @@ namespace CyberSoldierServer.Migrations
                     b.Property<int>("Power")
                         .HasColumnType("integer");
 
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
                     b.HasKey("Id");
 
                     b.ToTable("Cpus");
@@ -151,6 +154,9 @@ namespace CyberSoldierServer.Migrations
                     b.Property<int>("PrefabId")
                         .HasColumnType("integer");
 
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
                     b.HasKey("Id");
 
                     b.ToTable("DefenceItems");
@@ -171,6 +177,9 @@ namespace CyberSoldierServer.Migrations
 
                     b.Property<int>("PrefabId")
                         .HasColumnType("integer");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
 
                     b.Property<int>("SlotCount")
                         .HasColumnType("integer");
@@ -204,6 +213,9 @@ namespace CyberSoldierServer.Migrations
 
                     b.Property<int>("Capacity")
                         .HasColumnType("integer");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 

@@ -28,15 +28,8 @@ namespace CyberSoldierServer.Controllers {
 			if (player == null)
 				return NotFound("player not found for this user");
 
-			// var camp = await _dbContext.PlayerCamps.FirstOrDefaultAsync(c => c.PlayerId == player.Id);
-
 			var playerBase = _mapper.Map<PlayerCamp>(model);
 			playerBase.PlayerId = player.Id;
-
-			// if (camp != null) {
-			// 	playerBase.LastCollectTime = DateTime.Now;
-			// 	_dbContext.PlayerCamps.Remove(camp);
-			// }
 
 			await _dbContext.PlayerCamps.AddAsync(playerBase);
 			await _dbContext.SaveChangesAsync();
